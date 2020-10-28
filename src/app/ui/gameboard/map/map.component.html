@@ -1,0 +1,57 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="board && map">
+  <div id="tooltip" class="coordinate-tooltip" *ngIf="isTooltipVisible" [ngClass]="{'disabled': !!hovered ? hovered.isDisabled : true }">
+    <ng-container *ngIf="hovered && hovered.challenge">
+      <h5>{{ hovered.challenge.title }}</h5>      
+      <div class="row mt-3">
+        <div class="col-lg-9">
+          <span *ngIf="hovered.challenge.isMultiStage || hovered.challenge.tokenCount > 1" class="badge badge-warning mr-1 mb-1">partial-credit</span>
+          <span *ngIf="hovered.isDisabled" class="badge badge-danger mr-1 mb-1">currently-unavailable</span>
+          <span class="badge badge-dark mr-1 mb-1" *ngFor="let t of hovered.challenge.tags">{{ t }}</span>
+          <p class="description mt-1">{{ hovered.challenge.description | ellipsis:100 }}</p>
+        </div>
+        <div class="col-lg-3 text-center">
+          <h5>{{ hovered.challenge.points }}</h5>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <svg viewBox="0 0 100 100">
+    <svg:image [attr.href]="map.imageUrl" width="100" height="100" />
+
+    <ng-container *ngIf="showGrid">
+      <ng-container *ngFor="let i of [10,20,30,40,50,60,70,80,90]">
+        <svg:line [attr.x1]=i y1=0 [attr.x2]=i y2=100 stroke="lime" stroke-width=.1></svg:line>
+        <svg:line x1=0 [attr.y1]=i x2=100 [attr.y2]=i stroke="lime" stroke-width=.1></svg:line>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngFor="let c of map.coordinates">
+      <a class="coordinate-container" (mouseenter)="showTooltip($event, c)" (mouseleave)="hideTooltip()">
+        <svg:circle cx="0" cy="0" r="0" [attr.cx]="c.x" [attr.cy]="c.y" [attr.r]="c.radius" [ngClass]="getCoordinateClass(c)"
+                    (click)="onClick(c)"></svg:circle>
+      </a>
+    </ng-container>
+  </svg>
+</ng-container>
+
+<ng-container *ngIf="!map">
+  <p>No map loaded.</p>
+</ng-container>
+

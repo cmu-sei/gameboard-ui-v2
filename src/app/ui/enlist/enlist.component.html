@@ -1,0 +1,40 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div *ngIf="team" class="card">
+    <div class="card-header text-uppercase">Joining a Team</div>
+    <div class="card-body text-center">
+      <h3><img [src]="organization.logo" height="64px" />{{organization.title}}</h3>
+      <hr />
+      <p class="p-3">
+        The team you are joining is associated with <strong>{{team.organizationName}}</strong>.
+        Please confirm that you are a member of that organization.
+      </p>
+      <p *ngIf="enrollmentMessage">
+        <markdown>{{ enrollmentMessage }}</markdown>
+      </p>
+      <hr />
+      <p class="p-3">
+        By clicking <strong>Confirm</strong>,
+        I acknowledge the
+        <a [routerLink]="['/doc', 'Rules']">Competition Rules</a>
+        and agree to abide by them during the entire event.
+      </p>
+      <button class="btn btn-success btn-lg" (click)="confirm()">Confirm</button>
+    </div>
+</div>
+

@@ -1,0 +1,105 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container>
+  <div class="row mb-2">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-3"></div>
+    <div class="col-lg-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" (change)="filterMulti()" type="radio" name="multi" id="all" value="all" [(ngModel)]="multi">
+        <label class="form-check-label" for="all">All</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" (change)="filterMulti()" type="radio" name="multi" id="multiPart" value="multipart" [(ngModel)]="multi">
+        <label class="form-check-label" for="multiPart">Multi Part</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" (change)="filterMulti()" type="radio" name="multi" id="multiStage" value="multistage" [(ngModel)]="multi">
+        <label class="form-check-label" for="multiStage">Multi Stage</label>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="input-group input-group-sm">
+        <input type="text" class="form-control" placeholder="search..." aria-label="Search" [(ngModel)]="dataFilter.term" (keyup.enter)="reset()">
+        <div class="input-group-append">
+          <button class="btn btn-light" type="button" (click)="reset()"><i class="fa fa-search"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <pager *ngIf="result && dataFilter" [pagedResult]="result" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+  <table class="table table-striped table-dark" *ngIf="result">
+    <colgroup>
+      <col style="width: 10%" />
+      <col style="width: 30%" />
+      <col style="width: 10%" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">
+          <a (click)="sort('slug')">
+            Slug<i class="fa" [ngClass]="{ 'fa-chevron-down': dataFilter.sort == '-slug', 'fa-chevron-up': dataFilter.sort == 'slug'}"></i>
+          </a>
+        </th>
+        <th scope="col">
+          <a (click)="sort('title')">
+            Title<i class="fa" [ngClass]="{ 'fa-chevron-down': dataFilter.sort == '-title', 'fa-chevron-up': dataFilter.sort == 'title'}"></i>
+          </a>
+        </th>
+        <th scope="col">Style</th>
+        <th scope="col">Difficulty</th>
+        <th scope="col">Flags</th>
+        <th scope="col"></th>
+        <th scope="col">Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of result.results">
+        <td class="text-muted">{{ c.slug }}</td>
+        <td><a tooltip="{{ c.title }}" [routerLink]="['/challenge-developer/', c.slug]">{{ c.title.length > 40 ? (c.title | slice:0:37) + '...' : c.title }}</a></td>
+        <td>{{ c.flagStyle }}</td>
+        <td>
+          <small *ngIf="c.difficulty > 0">
+            <i class="fa fa-star" *ngFor="let d of createRange(c.difficulty)"></i>
+          </small>
+          <small *ngIf="!c.difficulty || c.difficulty == 0">
+            <i class="fa fa-star-o" tooltip="Difficulty is not set for this Challenge"></i>
+          </small>
+        </td>
+        <td>
+          <span *ngIf="c.flags.length == 0" class="text-danger" tooltip="This Challenge does not contain any Flags">{{ c.flags.length }}</span>
+          <span *ngIf="c.flags.length > 0">{{ c.flags.length }}</span>
+        </td>
+        <td>
+          <ng-container *ngIf="!isMultiPart(c) && !isMultiStage(c)"></ng-container>
+          <ng-container *ngIf="isMultiPart(c)">Multi Part</ng-container>
+          <ng-container *ngIf="isMultiStage(c)">Multi Stage</ng-container>
+        </td>
+        <td>
+          <span *ngFor="let t of getTags(c.tags)" class="badge badge-light text-dark font-weight-light text-uppercase mr-2">{{ t }}</span>
+        </td>
+      </tr>
+      <tr *ngIf="result && result.total == 0">
+        <td class="text-center text-muted" colspan="6">No results</td>
+      </tr>
+    </tbody>
+  </table>
+  <pager *ngIf="result && dataFilter" [pagedResult]="result" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+</ng-container>
+

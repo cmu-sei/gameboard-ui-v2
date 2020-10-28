@@ -1,0 +1,44 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div *ngIf="board" class="trivia">
+  <div class="row align-items-start">
+    <div *ngFor="let category of board.categories" class="col">
+      <div class="category">
+        <span class="name">{{ category.name }}</span>
+      </div>
+      <ng-container *ngFor="let question of category.questions">
+        <div [class]="'question ' + questionClass(question)" (click)="onClick(question)">
+          <div class="points">{{ question.points }}</div>
+          <div *ngIf="board.isTitleVisible && question.challenge && question.challenge.title" class="title" [ngClass]="{'text-warning': !question.isDisabled, 'text-muted': question.isDisabled }">
+            <span *ngIf="question.challenge.title.length > 30" tooltip="{{ question.challenge.title }}">
+              {{ question.challenge.title | ellipsis:30 }}
+            </span>
+            <span *ngIf="question.challenge.title.length <= 30">
+              {{ question.challenge.title }}
+            </span>
+          </div>
+          <!--<div class="legend">
+            <app-legend *ngIf="question.challenge.isMultiStage || question.challenge.tokenCount > 1" tooltip="Partial Credit" className="badge-warning" value="P"></app-legend>
+            <app-legend *ngIf="question.isDisabled" tooltip="Currently Unavailable" className="badge-danger" value="U"></app-legend>
+          </div>-->
+        </div>        
+      </ng-container>
+    </div>
+  </div>
+</div>
+

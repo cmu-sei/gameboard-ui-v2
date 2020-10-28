@@ -1,0 +1,82 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="row mb-3">
+  <div class="col-lg-3">
+    <h3>Challenge Survey Report</h3>    
+  </div>
+  <div class="col-lg-3">
+    <select class="form-control form-control" [(ngModel)]="id" (change)="onBoardChanged()">
+      <option *ngIf="!board" value="">Select...</option>
+      <option *ngFor="let b of boards" [value]="b.id">{{b.name}}</option>
+    </select>
+  </div>
+  <div class="col-lg-6 text-right">
+    <div class="btn-group" role="group" aria-label="Actions">
+      <button [disabled]="!report" class="btn btn-link" (click)="export()" tooltip="Export to CSV"><i class="fa fa-download fa-fw"></i></button>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="report">  
+  <ng-container *ngIf="report.items.length == 0">
+    <div class="card">
+      <div class="card-body">
+        <span class="text-muted">No surveys available.</span>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="report.items.length">
+    <div class="card">
+      <div class="card-header">
+        {{report.boardName}}
+      </div>
+      <div class="card-body">
+        <table class="table table-striped table-sm">
+          <colgroup>
+            <col style="width: 25%" />
+
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Challenge</th>
+              <th>Question</th>
+              <th>Answer</th>              
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of report.items">
+              <td>
+                <span>
+                  {{ item.challengeTitle }}
+                </span>                
+              </td>
+              <td>
+                <span>
+                  {{ item.question }}
+                </span>
+              </td>
+              <td>{{ item.answer }}</td>              
+              <td>{{ item.date | date:'MM/d/yyyy h:mma' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+

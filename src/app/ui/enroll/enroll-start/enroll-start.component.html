@@ -1,0 +1,84 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="card" *ngIf="profile">
+  <div class="card-header text-uppercase text-center">
+    <div class="row">
+      <div class="col-lg-2">
+        <a class="pull-left" routerLink="../organization"><i class="fa fa-chevron-left"></i> Previous</a>
+      </div>
+      <div class="col-lg-8">
+        Configure Your Enrollment
+      </div>
+      <div class="col-lg-2">
+        <a *ngIf="multiplayer" class="pull-right" routerLink="../teammates">Next <i class="fa fa-chevron-right"></i></a>
+        <a *ngIf="!multiplayer" class="pull-right" routerLink="../confirm">Next <i class="fa fa-chevron-right"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ng-container *ngIf="profile.user.organization">
+      <div class="row">
+        <div class="col-lg-6" *ngIf="(profile.team && !profile.team.isLocked && profile.team.ownerUserId === profile.user.id) || !profile.team">
+          <strong *ngIf="multiplayer">
+            Choose Your Team Name
+          </strong>
+          <strong *ngIf="!multiplayer">Choose Your Name</strong>
+          <hr />
+          <p class="border-left border-warning p-2 ml-2">
+            Please ensure your display name is appropriate for a
+            public and professional presentation.
+          </p>
+          <div class="form-group">
+            <label>What name do you want for the scoreboard?</label>
+            <input type="text" class="form-control" placeholder="Display Name" [(ngModel)]="name" maxlength="50">
+            <small class="form-text text-muted text-right">{{50 - (name ? name.length : 0)}} chars available</small>
+          </div>
+          <div class="text-right">
+            <button class="btn btn-success" (click)="save()">Save</button>
+          </div>
+        </div>
+        <div class="col-lg-6" *ngIf="multiplayer && ((profile.team && profile.team.ownerUserId !== profile.user.id) || !profile.team)">
+          <strong>Join a Team</strong>
+          <hr />
+          <ng-container *ngIf="profile.team && profile.team.ownerUserId !== profile.user.id">
+            <p class="border-left border-warning p-2 ml-2">
+              You have joined <strong>{{ profile.team.name }}</strong>. Please wait for your team leader to complete enrollment.
+            </p>
+          </ng-container>
+          <ng-container *ngIf="!profile.team">
+            <p class="border-left border-warning p-2 ml-2">
+              To join an existing team, ask the team leader for an invitation link.
+            </p>
+            <p class="border-left border-light p-2 ml-2">
+              If you plan to be on somebody else's team,
+              you should not enroll a new team name here.
+            </p>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!profile.user.organization">
+      <p class="border-left border-warning p-2 ml-2">
+        You need to <a routerLink="../organization">select an organization</a> before continuing.
+      </p>
+    </ng-container>
+  </div>
+</div>
+
+
+

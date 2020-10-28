@@ -1,0 +1,129 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="row">
+  <div class="col-lg-3">
+    <h3>Users</h3>
+  </div>
+  <div class="col-lg-9 text-right">
+  </div>
+</div>
+<div class="row mb-2">
+  <div class="col-lg-3">
+    <select [(ngModel)]="dataFilter.sort" class="form-control" name="sort" (change)="onSortChanged()" tooltip="Sort">
+      <option value="name">Name (ASC)</option>
+      <option value="-name">Name (DESC)</option>
+      <option value="organization">Organization (ASC)</option>
+      <option value="-organization">Organization (DESC)</option>
+    </select>
+  </div>
+  <div class="col-lg-3">
+    <select *ngIf="organizations" [(ngModel)]="organization" class="form-control" name="sort" (change)="onFilterChanged()" tooltip="Filter by Organization">
+      <option value="">All Organizations</option>
+      <option *ngFor="let o of organizations" value="{{ o.name }}">{{ o.title }}</option>
+    </select>
+  </div>
+  <div class="col-lg-3">
+    <label class="filter">
+      <input type="checkbox" [(ngModel)]="moderator" (change)="onFilterChanged()" tooltip="Filter by Moderators" /> Moderators
+    </label>
+    <label class="filter">
+      <input type="checkbox" [(ngModel)]="observer" (change)="onFilterChanged()" tooltip="Filter by Observers" /> Observers
+    </label>
+  </div>
+  <div class="col-lg-3">
+    <label class="filter">
+      <input type="checkbox" [(ngModel)]="challengeDeveloper" (change)="onFilterChanged()" tooltip="Filter by Challenge Developers" /> Challenge Developers
+    </label>
+    <label class="filter">
+      <input type="checkbox" [(ngModel)]="gameDesigner" (change)="onFilterChanged()" tooltip="Filter by Game Designers" /> Game Designers
+    </label>
+  </div>
+</div>
+<hr />
+<ng-container *ngIf="users">
+  <pager [pagedResult]="users" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+  <table class="table table-striped table-dark">
+    <colgroup>
+      <col style="width: 5%" />
+      <col style="width: 15%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col" colspan="2">Team</th>
+        <th scope="col">Organization</th>
+        <th scope="col">Permissions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of users.results">
+        <td>
+          <div class="btn-group btn-group-sm" role="group" aria-label="User Actions">
+            <button *ngIf="isModerator" class="btn btn-link" (click)="resetUser(u)" tooltip="Reset User"><i class="fa fa-refresh"></i></button>
+          </div>
+        </td>
+        <td>{{ u.name }}</td>
+        <td>{{ u.teamName }}</td>
+        <td><span class="text-muted">{{ u.anonymizedTeamName }}</span></td>
+        <td>{{ u.organization }}</td>
+        <td>
+          <div class="btn-group btn-group-sm" role="group">
+            <button class="btn" (click)="togglePermission(u, 'moderator')" [ngClass]="u.isModerator ? 'btn-warning' : 'btn-dark'" tooltip="Moderator">
+              <i class="fa fa-star fa-fw"></i>
+            </button>
+            <button class="btn" (click)="togglePermission(u, 'observer')" [ngClass]="u.isObserver ? 'btn-warning' : 'btn-dark'" tooltip="Observer">
+              <i class="fa fa-eye fa-fw"></i>
+            </button>
+            <button class="btn btn-sm" (click)="togglePermission(u, 'challengedeveloper')" [ngClass]="u.isChallengeDeveloper ? 'btn-warning' : 'btn-dark'" tooltip="Challenge&nbsp;Developer">
+              <i class="fa fa-flag fa-fw"></i>
+            </button>
+            <button class="btn btn-sm" (click)="togglePermission(u, 'gamedesigner')" [ngClass]="u.isGameDesigner ? 'btn-warning' : 'btn-dark'" tooltip="Game&nbsp;Designer">
+              <i class="fa fa-gamepad fa-fw"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="users.results.length == 0">
+        <td class="text-center text-muted" colspan="6">No results</td>
+      </tr>
+    </tbody>
+  </table>
+  <pager [pagedResult]="users" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+</ng-container>
+<div bsModal #confirmModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start" [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="confirm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{ confirm.title }}</h4>
+        <i class="fa fa-times fa-pull-right" (click)="hideConfirm()"></i>
+      </div>
+      <div class="modal-body text-center">
+        <p>{{ confirm.message }}</p>
+      </div>
+      <div class="modal-footer text-center">
+        <button class="btn btn-danger" (click)="onConfirm()" [disabled]="pending">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+

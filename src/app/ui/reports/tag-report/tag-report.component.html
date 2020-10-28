@@ -1,0 +1,54 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container>
+
+  <h3>Tag Report</h3>
+
+  <div class="card" *ngIf="model">
+    <div class="card-header">
+      {{ model.name }}
+    </div>
+    <div class="card-body">
+      <table class="table table-striped table-sm">
+        <colgroup>
+          <col style="width: 40%;" />
+          <col style="width: 10%;" />
+          <col style="width: 50%;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Challenges</th>
+            <th>Score</th>
+            <th>Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of model.result.results; let i = index">
+            <td>{{ c.title }}</td>
+            <td>{{ c.problemScore }}</td>
+            <td>
+              <span *ngFor="let tag of c.tags" class="badge badge-light mr-1">{{ tag }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</ng-container>
+

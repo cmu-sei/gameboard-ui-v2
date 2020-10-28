@@ -1,0 +1,93 @@
+{
+  "commit": "##COMMIT##",
+  "applicationName": "Gameboard",
+  "coreUrl": "http://localhost:5075",
+  "docUrl": "http://localhost:5075/doc",
+  "docToc": "toc.json",
+  "oidcLocalStorage": true,
+  "oidc": {
+    "authority": "http://localhost:5000",
+    "client_id": "gameboard",
+    "redirect_uri": "http://localhost:5008/oidc",
+    "silent_redirect_uri": "http://localhost:5008/oidc-silent",
+    "post_logout_redirect_uri": "http://localhost:5008",
+    "response_type": "id_token token",
+    "scope": "openid profile email organization sketch-common",
+    "automaticSilentRenew": true,
+    "filterProtocolClaims": true,
+    "monitorSession": true,
+    "checkSessionInterval": 30000,
+    "accessTokenExpiringNotificationTime": 120
+  },
+  "branding": {
+    "sidebar": {
+      "logo": {
+        "url": "https://localhost/logo.png",
+        "alt": "logo",
+        "style": {
+          "height": "200px",
+          "margin-top": "1.5rem"
+        }
+      }
+    },
+    "header": {
+      "logo": {
+        "url": "https://localhost/banner.png",
+        "alt": "banner",
+        "style": {
+          "height": "150px",
+          "padding-top": "1.5rem",
+          "padding-bottom": "1.5rem"
+        }
+      },
+      "message": {
+        "primaryText": "Gameboard Dev",
+        "secondaryText": "Season 2 Coming Up!",
+        "icon": "fa-4x fa fa-smile-o"
+      }
+    },
+    "enrollmentMessage": ""
+  },
+  "environment": {
+    "mode": "Test",
+    "allowBoardReset": true,
+    "resetMinutes": 2.0
+  },
+  "badge": {
+    "defaults": {
+      "textCss": "text-white",
+      "disabledTextCss": "text-dark",
+      "iconCss": "text-light",
+      "disabledIconCss": "text-light disabled"
+    },
+    "items": [
+      {
+        "key": "R1",
+        "hint": "Advanced to Round 2",
+        "css": "text-info",
+        "type": "text"
+      },
+      {
+        "key": "R2",
+        "hint": "Advanced to Finals",
+        "css": "text-success",
+        "type": "text"
+      },
+      {
+        "key": "!",
+        "hint": "Runner Up",
+        "css": "text-danger",
+        "type": "icon",
+        "icon": "fa-linux"
+      },
+      {
+        "key": "F",
+        "hint": "Cup Winner",
+        "css": "text-warning",
+        "type": "icon",
+        "icon": "fa-rupee"
+      }
+    ]
+  },
+  "finalsMap": []
+}

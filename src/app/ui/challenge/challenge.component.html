@@ -1,0 +1,335 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="challengeProblem && teamBoard && teamBoard.state">
+  <app-board-header [board]="teamBoard.board"
+                    [teamBoard]="teamBoard"
+                    [profile]="profile"
+                    [isStartVisible]="false"
+                    [isResetVisible]="false"></app-board-header>  
+  <div class="row mb-5">
+    <div class="col-lg-2">
+      <div class="gameboard-challenge challenge-score">{{ challengeProblem.challenge.points }}</div>
+      <ng-container *ngIf="challengeProblem.state.isStarted">
+        <div class="row text-small mt-2">
+          <ng-container *ngIf="challengeProblem.problem.status">
+            <div class="col-lg-4"><strong>Status:</strong></div>
+            <div class="col-lg-8">
+              <span [ngClass]="{
+                'text-light': challengeProblem.problem.status == 'Registered',
+                'text-warning': challengeProblem.problem.status == 'Ready',
+                'text-success': challengeProblem.problem.status == 'Success',
+                'text-danger': challengeProblem.problem.status == 'Failure' }">{{challengeProblem.problem.status}}</span>
+            </div>
+          </ng-container>
+          <div class="col-lg-4"><strong>Score:</strong></div>
+          <div class="col-lg-8">{{challengeProblem.problem.score}}</div>
+          <div class="col-lg-12">
+            <div class="progress">
+              <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                   [ngStyle]="{ 'width': (challengeProblem.problem.score / challengeProblem.challenge.points) * 100 + '%' }"></div>
+            </div>
+          </div>
+          <div class="col-lg-4"><strong>Start:</strong></div>
+          <div class="col-lg-8">{{challengeProblem.problem.start | date:'M/d/yy HH:mm'}}</div>
+          <div class="col-lg-4"><strong>Stop:</strong></div>
+          <div class="col-lg-8">{{challengeProblem.problem.end | date:'M/d/yy HH:mm'}}</div>
+          <div class="col-lg-4"><strong>Timer:</strong></div>
+          <div class="col-lg-8">{{challengeProblem.state.duration | timespan}}</div>
+        </div>
+      </ng-container>
+      <div class="text-center">
+        <ng-container *ngIf="!challengeProblem.state.isStarted && teamBoard.state.active && !initializing">
+          <button type="button" class="btn btn-success btn-lg btn-block text-uppercase mt-2" (click)="openModal(startModal)">Start</button>
+        </ng-container>
+        <ng-container *ngIf="isRestartAllowed && !initializing">
+          <button type="button" class="btn btn-info btn-lg btn-block text-uppercase mt-2" (click)="openModal(restartModal)">Restart</button>
+        </ng-container>        
+        <ng-container *ngIf="challengeProblem.state.isStarted && isTestMode">
+          <button [disabled]="initializing" type="button" class="btn btn-warning btn-lg btn-block text-uppercase mt-2" (click)="openModal(resetModal)">Reset</button>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          {{challengeProblem.challenge.title}}
+          <span class="pull-right">
+            <span *ngIf="challengeProblem.challenge.isMultiStage || challengeProblem.challenge.tokenCount > 1" class="badge badge-warning mr-1 mb-1">partial-credit</span>
+          </span>
+        </div>
+        <div class="card-body">
+          <p class="text">
+            <span *ngFor="let t of challengeProblem.challenge.tags" class="badge badge-dark mr-1">{{ t }}</span>
+          </p>
+          <markdown>{{challengeProblem.challenge.description}}</markdown>
+          <div *ngIf="challengeProblem.state && challengeProblem.state.isError">
+            <div class="alert alert-danger my-2 p-4 text-left">
+              There was an error starting this Challenge. This is usually intermittent.
+              Please wait a minute or so and try again.  If the challengeProblem.problem doesn't load
+              after a few minutes/retries, contact support with the code shown below.
+            </div>
+            <button [disabled]="initializing" class="btn btn-primary m-4" (click)="openModal(startModal)">Retry</button>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-primary" *ngIf="challengeProblem.state.isPending || challengeProblem.state.restarting">
+        <i class="text-center fa fa-spinner fa-spin"></i>
+        Your challenge is initializing, please be patient...
+        <span *ngIf="!!eta">(Estimated wait: {{eta}})</span>
+      </div>
+      <div class="card" *ngIf="challengeProblem.state.isActive && teamBoard.state.active">
+        <div class="card-header">
+          <div class="float-left">
+            <span style="vertical-align:middle;">Instructions</span>
+          </div>
+          <div class="float-right">
+            <span class="btn-group btn-group-sm"><button type="button" class="btn btn-secondary btn-sm" (click)="printChallenegeInstructions()" tooltip="Print Challenge Instructions"><i class="fa fa-print"></i></button></span>
+          </div>
+        </div>
+        <div class="card-body">
+          <markdown [data]="challengeProblem.problem.text"></markdown>
+        </div>
+      </div>
+      <div class="card" *ngIf="challengeProblem.state.isActive && teamBoard.state.active">
+        <div class="card-header">
+          Gamespace
+          <ng-container *ngIf="challengeProblem.problem.hasGamespace">
+            <button *ngIf="challengeProblem.problem.gamespaceReady" class="btn btn-danger text-uppercase btn-sm pull-right" [disabled]="challengeProblem.state.isPending" tooltip="Delete your Gamespace" (click)="openModal(deleteGamespaceModal)">Delete</button>
+            <button *ngIf="!challengeProblem.problem.gamespaceReady" class="btn btn-warning text-uppercase btn-sm pull-right" [disabled]="challengeProblem.state.isPending" tooltip="Restart your Gamespace" (click)="openModal(restartGamespaceModal)">Restart</button>
+          </ng-container>
+        </div>
+        <div class="card-body">
+          <ng-container *ngIf="!challengeProblem.problem.hasGamespace">
+            <div class="alert alert-dark text-center">This challenge has no virtual gamespace.</div>
+          </ng-container>
+          <ng-container *ngIf="challengeProblem.problem.hasGamespace">
+            <div class="alert alert-dark text-center">This challenge has a virtual gamespace.</div>
+            <markdown *ngIf="challengeProblem.problem.gamespaceText" [data]="challengeProblem.problem.gamespaceText"></markdown>
+            <div class="row">
+              <div class="col-lg-6">
+                <p>
+                  The number of concurrent gamespaces you can have running is limited.
+                  If you started this challenge, but decide to move on to another
+                  challenge without finishing it, you can <button class="btn btn-danger btn-sm text-uppercase disabled">Delete</button> this gamespace.
+                  The challenge timer will not stop.
+                </p>
+              </div>
+              <div class="col-lg-6">
+                <p>
+                  When you return to this challenge,
+                  you can <button class="btn btn-warning btn-sm text-uppercase disabled">Restart</button> the gamespace in it's original state.
+                </p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngIf="challengeProblem.state.isStarted" class="card submissions">
+        <div class="card-header">Submissions</div>
+        <div class="card-body text-small">
+          <div *ngIf="challengeProblem.state.canSubmit && teamBoard.state.active">
+            <ng-container *ngFor="let token of tokens; let in=index; trackBy:trackByFn">
+              <label *ngIf="token.label && isVisible(token, in)" class="form-text mb-1">
+                <b *ngIf="challengeProblem.challenge.isMultiStage" class="pr-1">(Stage {{in + 1}} of {{tokens.length}})</b>
+                <b *ngIf="!challengeProblem.challenge.isMultiStage && challengeProblem.challenge.tokenCount > 1" class="pr-1">(Part {{in + 1}} of {{tokens.length}})</b>
+                <b *ngIf="!challengeProblem.challenge.isMultiStage && challengeProblem.challenge.tokenCount === 1" class="pr-1">(Single Answer)</b>
+                {{ token.label }}
+              </label>
+              <ng-container *ngIf="challengeProblem.challenge.flagStyle === 'Token' && isVisible(token, in)">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend" *ngIf="tokens.length > 1">
+                    <span class="input-group-text text-uppercase" style="width: 100px;"
+                          [ngClass]="{ 'text-success': token.status == 'Correct' }">
+                      {{ (token.percent / 100) * challengeProblem.challenge.points | number:'1.0-2' }} Points
+                    </span>
+                  </div>
+                  <input type="text" class="form-control" [placeholder]="token.status === 'Correct' ? 'correct' : 'enter token'"
+                         aria-label="token" aria-describedby="submit-flag"
+                         autocomplete="off" spellcheck="false" autocorrect="off"
+                         [disabled]="isDisabled(token, in)"
+                         [(ngModel)]="tokens[in].value"
+                         [ngClass]="{ 'is-valid': token.status == 'Correct' }" />
+                </div>
+              </ng-container>
+              <ng-container *ngIf="challengeProblem.challenge.flagStyle === 'Text' && isVisible(token, in)">
+                <textarea class="form-control my-2" [placeholder]="token.status === 'Correct' ? 'correct' : 'enter token'" rows="10"
+                          aria-label="token" aria-describedby="submit-flag"
+                          spellcheck="false" autocorrect="off"
+                          [disabled]="isDisabled(token, in)"
+                          [(ngModel)]="tokens[in].value"
+                          [ngClass]="{ 'is-valid': token.status == 'Correct' }"></textarea>
+              </ng-container>
+            </ng-container>
+            <div class="text-right">
+              <button class="btn btn-secondary mt-2 text-uppercase" type="button"
+                      (click)="openModal(submitModal)"
+                      [disabled]="challengeProblem.state.grading">
+                Submit
+              </button>
+            </div>
+            <p *ngIf="challengeProblem.state.grading">
+              <i class="fa fa-arrow-left"></i>
+              Waiting for result
+              <i class="text-center fa fa-spinner fa-spin"></i>
+            </p>
+          </div>
+          <div class="col-lg-10">
+            <ul *ngIf="challengeProblem.problem && challengeProblem.problem.submissions" class="list-unstyled submissions mt-2">
+              <li *ngFor="let s of challengeProblem.problem.submissions; trackBy: trackSubmissions; let submissionIndex = index;">
+                <span class="badge text-uppercase"
+                      [ngClass]="getStatusClass(s, submissionIndex)">{{ getStatusText(s, submissionIndex) }}</span>
+                <span class="text-uppercase" [ngClass]="{ 'text-muted': s.status != 'Passed' }">
+                  by <strong>{{s.userName}}</strong> at <strong>{{s.timestamp | date:'M/d/yyyy h:mm a' }}</strong>
+                </span>
+                <ng-container *ngIf="s.tokens && s.tokens.length > 0">
+                  <div class="row mt-1" *ngFor="let token of s.tokens; let in=index;">
+                    <div class="col-lg-4 text-right text-uppercase">
+                      {{ (token.percent / 100) * challengeProblem.challenge.points | number:'1.0-2' }} Points
+                    </div>
+                    <div class="col-lg-1 text-uppercase" [ngClass]="{ 'text-success': token.status == 'Correct', 'text-danger': token.status == 'Incorrect' }">
+                      <i *ngIf="token.status == 'Correct'" class="fa fa-fw fa-check"></i>
+                      <i *ngIf="token.status == 'Incorrect'" class="fa fa-fw fa-times"></i>
+                    </div>
+                    <div class="col-lg-7 text-left" *ngIf="challengeProblem.problem.tokens">
+                      {{ challengeProblem.problem.tokens[in].label }}
+                    </div>
+                  </div>
+                </ng-container>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>      
+      <app-survey *ngIf="challengeProblem.problem" [id]="challengeProblem.problem.challengeLinkId"                  
+                  [message]="surveyMessage"
+                  [hideCompleteButton]="true">
+      </app-survey>
+      <p *ngIf="challengeProblem.problem" class="text-right text-muted">Support Code: {{challengeProblem.problem.id | slice:0:8}}</p>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #deleteGamespaceModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Delete Challenge Gamespace</h4>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete your Gamespace for this Challenge?</p>
+  </div>
+  <div *ngIf="teamBoard.board.allowSharedWorkspaces == true" class="modal-body">
+    <p>This board uses shared gamespaces. Deleting this gamespace will remove all active gamespaces on this board for all members of this team. Your team members may lose progress. This action can't be undone. Are you sure you want to continue?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-danger btn-sm" (click)="deleteGamespace()">Continue</button>
+  </div>
+</ng-template>
+
+<ng-template #restartGamespaceModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Restart Challenge Gamespace</h4>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to restart your Gamespace for this Challenge?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-danger btn-sm" (click)="restartGamespace()">Continue</button>
+  </div>
+</ng-template>
+
+<ng-template #startModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Start Challenge</h4>
+  </div>
+  <div class="modal-body text-center">
+    <p>Are you sure you want to begin this Challenge and start your timer?</p>
+    <div *ngIf="showFlagIndexSelect" class="alert alert-warning text-center" style="margin: 0 20%;">
+      Select Flag To Test
+      <select [(ngModel)]="flagIndex">
+        <option [value]="null">Random</option>
+        <option *ngFor="let i of flagIndices" [value]="i">{{ i + 1 }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="start()">Continue</button>
+  </div>
+</ng-template>
+
+<ng-template #restartModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Restart Challenge</h4>
+  </div>
+  <div class="modal-body text-center">
+    <p>Your challenge seems to have had trouble starting.</p>
+    <p>Are you sure you want to attempt to restart this Challenge?</p>    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="restart()">Continue</button>
+  </div>
+</ng-template>
+
+<ng-template #resetModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Reset Challenge</h4>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to reset this Challenge?</p>
+  </div>
+  <div *ngIf="teamBoard.board.allowSharedWorkspaces == true" class="modal-body">
+    <p>This board uses shared gamespaces. Resetting this challenge will remove all active gamespaces on this board for all members of this team. Your team members may lose progress. This action can't be undone. Are you sure you want to continue?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="reset()">Continue</button>
+  </div>
+</ng-template>
+
+<ng-template #submitModal>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <ng-container *ngIf="challengeProblem.challenge.isMultiStage || challengeProblem.challenge.tokenCount === 1">
+        Submit Token
+      </ng-container>
+      <ng-container *ngIf="!challengeProblem.challenge.isMultiStage && challengeProblem.challenge.tokenCount > 1">
+        Submit Tokens
+      </ng-container>      
+    </h4>
+  </div>
+  <div *ngIf="challengeProblem.challenge.isMultiStage" class="modal-body text-center">
+    <p>Are you sure you want to submit this token?</p>
+    <p>This is attempt <strong>{{challengeProblem.state.attemptCount}} of {{challengeProblem.state.attemptMax || 'unlimited'}}</strong> for this stage.</p>
+  </div>
+  <div *ngIf="!challengeProblem.challenge.isMultiStage && tokens.length > 1" class="modal-body text-center">
+    <p>Are you sure you want to submit these tokens?</p>
+    <p>This is attempt <strong>{{challengeProblem.state.attemptCount}} of {{challengeProblem.state.attemptMax || 'unlimited'}}</strong> for this challenge.</p>
+    <p>All challenge tokens should be submitted at the same time.</p>
+  </div>
+  <div *ngIf="!challengeProblem.challenge.isMultiStage && tokens.length == 1" class="modal-body text-center">
+    <p>Are you sure you want to submit this token?</p>
+    <p>This is attempt <strong>{{challengeProblem.state.attemptCount}} of {{challengeProblem.state.attemptMax || 'unlimited'}}</strong> for this challenge.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="submit()" [disabled]="challengeProblem.state.grading">Continue</button>
+  </div>
+</ng-template>
+

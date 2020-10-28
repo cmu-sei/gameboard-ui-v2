@@ -1,0 +1,106 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="profile">
+  <div class="card" id="lock">
+    <div class="card-header text-uppercase text-center">
+      <div class="row">
+        <div class="col-lg-2">
+          <a *ngIf="multiplayer" class="pull-left" routerLink="../teammates"><i class="fa fa-chevron-left"></i> Previous</a>
+          <a *ngIf="!multiplayer" class="pull-left" routerLink="../enrollment"><i class="fa fa-chevron-left"></i> Previous</a>
+        </div>
+        <div class="col-lg-8">
+          Confirm Enrollment
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <ng-container *ngIf="canEdit()">
+        <div class="row">
+          <div class="col-lg-6">            
+            <p class="border-left border-warning p-2 ml-2">
+              Be sure your {{ multiplayer ? 'team' : 'enrollment' }} name is appropriate for a public and professional presentation.
+            </p>            
+          </div>
+          <div class="col-lg-6" *ngIf="canInvite()">
+            <p class="border-left border-warning p-2 ml-2">
+              Be sure all teammates who should be on your team have already joined.
+            </p>
+          </div>
+        </div>
+        <div class="text-center" *ngIf="profile.team">
+          <hr />
+          <p class="p-4">
+            After clicking "Confirm Enrollment", your enrollment is locked.<br />
+            You will not be able to change your organization, alter your {{ multiplayer ? 'team' : 'enrollment' }} name, or invite more teammates.
+          </p>
+          <p *ngIf="enrollmentMessage">
+            <markdown>{{ enrollmentMessage }}</markdown>
+          </p>
+          <hr />
+          <p class="p-4">
+            By clicking <strong>Confirm Enrollment</strong>,
+            I acknowledge the <a [routerLink]="['/doc', 'Rules']">Competition Rules</a>
+            and agree to abide by them during the entire event.
+          </p>
+          <button type="button" class="btn btn-success btn-lg"
+                  (click)="openModal(completeModal)">
+            Confirm Enrollment
+          </button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="isLocked()">
+        <p class="border-left border-warning p-2 ml-2">
+          Your enrollment is locked.
+        </p>
+      </ng-container>
+      <ng-container *ngIf="isMember() && !isLocked()">
+        <p class="border-left border-warning p-2 ml-2">
+          Enrollment Pending. Please wait for your team leader to finish the team enrollment.
+        </p>
+      </ng-container>
+      <ng-container *ngIf="profile && !profile.user.organization">
+        <p class="border-left border-warning p-2 ml-2">
+          You need to <a routerLink="../organization">select an organization</a> before continuing.
+        </p>
+      </ng-container>
+      <ng-container *ngIf="profile && profile.user.organization && !profile.team">
+        <p class="border-left border-warning p-2 ml-2">
+          You need to <a routerLink="../enrollment">choose your enrollment name</a> before continuing.
+        </p>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #completeModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Confirm Enrollment To Play</h4>
+  </div>
+  <div class="modal-body text-center">
+    <p>
+      Are you sure you want to complete your enrollment? You only get one shot at this.<br />
+      You will not be able to change your organization, alter your {{ multiplayer ? 'team' : 'enrollment' }} name, or invite more teammates.
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Cancel</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="lock()">Continue</button>
+  </div>
+</ng-template>
+

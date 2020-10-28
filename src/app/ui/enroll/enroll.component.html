@@ -1,0 +1,62 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="!isLocked && isAllowed">
+  <div class="row text-center enrollment-nav">
+    <div class="col">
+      <a routerLink="organization" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasOrganization, 'fa-check-circle-o': hasOrganization }"></i>
+        Organization
+      </a>
+    </div>
+    <div class="col">
+      <a routerLink="enrollment" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasEnrollment, 'fa-check-circle-o': hasEnrollment }"></i>
+        Enrollment
+      </a>
+    </div>
+    <div class="col" *ngIf="multiplayer">
+      <a routerLink="teammates" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasMembers, 'fa-check-circle-o': hasMembers }"></i>
+        Teammates
+      </a>
+    </div>
+    <div class="col">
+      <a routerLink="confirm" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasComplete, 'fa-check-circle-o': hasComplete }"></i>
+        Confirm
+      </a>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col panel ml-auto mr-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="isLocked" class="card">
+  <div class="card-body">
+    <h4>Your enrollment is locked.</h4>
+  </div>
+</div>
+<div *ngIf="!isAllowed" class="card">
+  <div class="card-body">
+    <h4>The enrollment period has ended.</h4>
+  </div>
+</div>
+

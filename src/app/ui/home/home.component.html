@@ -1,0 +1,110 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div *ngIf="connectionError" class="signalr p-2">
+  Connection to the gameboard was interrupted; attempting to restore the connection...
+</div>
+<ngx-snackbar position="top-right" max="5"></ngx-snackbar>
+<div class="container-fluid">
+  <div class="row vh-100">
+    <div class="col-lg-3 col-md-4 sidebar">
+      <div class="logo text-center">
+        <img [src]="sidebar.logo.url" alt="{{ sidebar.logo.alt }}" [ngStyle]="sidebar.logo.style">
+      </div>
+      <app-user></app-user>
+      <app-gameboard-list [boards]="boards" [profile]="profile"></app-gameboard-list>
+      <app-leaderboard-summary></app-leaderboard-summary>
+      <div *ngIf="status && profile && profile.user && profile.user.isModerator" class="text-center pb-2">
+        <i class="fa fa-code-fork fa-fw text-muted ml-2" tooltip="{{ status.commit ? status.commit : 'N/A' }}"></i>
+        <ng-container *ngFor="let module of status.status.modules">
+          <i class="fa fa-cloud fa-fw text-muted ml-2" *ngIf="module.name === 'Gameboard'" tooltip="{{ 'API (' + module.version + ')'}}"></i>
+          <i class="fa fa-cube fa-fw text-muted ml-2" *ngIf="module.name === 'GameEngine.Client'" tooltip="{{ 'Client (' + module.version + ')'}}"></i>
+          <i class="fa fa-moon-o fa-fw text-muted ml-2" *ngIf="module.name === 'GameEngine.Abstractions'" tooltip="{{ 'Abstractions (' + module.version + ')'}}"></i>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-lg-9 col-md-8">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-auto"><img [src]="header.logo.url" alt="{{ header.logo.alt }}" [ngStyle]="header.logo.style"></div>
+          <div class="col-auto ml-auto info-box text-success">
+            <div class="row no-gutters">
+              <div class="col-auto mr-2"><i [ngClass]="header.message.icon"></i></div>
+              <div class="col-auto">
+                <h4>{{ header.message.primaryText }}</h4>
+                <p>{{ header.message.secondaryText }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-auto">
+            <app-doc-list [list]="docs" (selected)="loadDoc($event)"></app-doc-list>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #ieModal="bs-modal"
+     class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-auto-name" class="modal-title pull-left">Internet Explorer Detected</h4>
+        <i class="fa fa-times fa-pull-right" (click)="hideModal()"></i>
+      </div>
+      <div class="modal-body text-center">
+        <div class="row">
+          <div class="col">
+            <p>We noticed you are using Internet Explorer. Some features on this site will not work. For a better user experience we recommend the following browsers:</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <ul class="list-unstyled browser-link">
+              <li class="pb-2"><i class="fa fa-chrome fa-4x"></i></li>
+              <li>Chrome</li>
+              <li><a href="https://www.google.com/chrome/" target="_blank">Download</a></li>
+            </ul>
+          </div>
+          <div class="col">
+            <ul class="list-unstyled browser-link">
+              <li class="pb-2"><i class="fa fa-firefox fa-4x"></i></li>
+              <li>Firefox</li>
+              <li><a href="https://www.mozilla.org/en-US/firefox/" target="_blank">Download</a></li>
+            </ul>
+          </div>
+          <div class="col">
+            <ul class="list-unstyled browser-link">
+              <li class="pb-2"><i class="fa fa-edge fa-4x"></i></li>
+              <li>Edge</li>
+              <li><a href="https://www.microsoft.com/en-us/windows/microsoft-edge" target="_blank">Info</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

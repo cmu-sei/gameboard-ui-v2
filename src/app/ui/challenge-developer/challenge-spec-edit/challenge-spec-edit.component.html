@@ -1,0 +1,102 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="row" *ngIf="challenge">
+  <div class="col-lg-6">
+    <div class="form-group">
+      <input name="slug" [(ngModel)]="challenge.slug" type="text" class="form-control form-control-sm" id="slug" aria-describedby="slugHelp" placeholder="Slug">
+      <small class="form-text text-muted">unique identifier</small>
+    </div>
+    <div class="form-group">
+      <input name="title" [(ngModel)]="challenge.title" type="text" class="form-control form-control-sm" placeholder="Title">
+      <small class="form-text text-muted">title of this challenge for display</small>
+    </div>
+    <div class="form-group">
+      <input name="authors" [(ngModel)]="challenge.authors" type="text" class="form-control form-control-sm" placeholder="Authors">
+      <small class="form-text text-muted">authors of this challenge, separated by commas</small>
+    </div>
+    <div class="form-group">
+      <input name="tags" [(ngModel)]="challenge.tags" type="text" class="form-control form-control-sm" placeholder="Tags">
+      <small class="form-text text-muted">tags describing this challenge</small>
+    </div>
+    <div class="form-check">
+      <input name="isMultiStage" type="checkbox" class="form-check-input" id="isMultiStage" [(ngModel)]="challenge.isMultiStage">
+      <label class="form-check-label" for="isMultiStage">Multi Stage</label>
+      <small class="form-text text-muted">multi stage challenges must be solved sequentially</small>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="form-group">
+      <input name="document" [(ngModel)]="challenge.document" type="text" class="form-control form-control-sm" placeholder="Document">
+      <small class="form-text text-muted">document associated with this challenge</small>
+    </div>
+    <div class="form-group">
+      <input name="points" [(ngModel)]="challenge.points" type="text" class="form-control form-control-sm" placeholder="Points">
+      <small class="form-text text-muted">suggested total points for this challenge</small>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Difficulty</label>
+      <div class="col-sm-8">
+        <select name="difficulty" class="form-control form-control-sm" [(ngModel)]="challenge.difficulty">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="col-sm-12">
+        <small class="form-text text-muted">estimated difficulty of this challenge</small>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Flag Style</label>
+      <div class="col-sm-8">
+        <select name="flagStyle" class="form-control form-control-sm" [(ngModel)]="challenge.flagStyle">
+          <option>Token</option>
+          <option>Text</option>
+        </select>
+      </div>
+      <div class="col-sm-12">
+        <small class="form-text text-muted">how players enter answers (token = textbox, text = textarea)</small>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="form-group">
+      <textarea name="text" [(ngModel)]="challenge.description" class="form-control form-control-sm" placeholder="Description" rows="10"></textarea>
+      <small class="form-text text-muted">short description for this challenge</small>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <markdown [data]="challenge.description"></markdown>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="form-group">
+      <textarea name="text" [(ngModel)]="challenge.text" class="form-control form-control-sm" placeholder="Text" rows="10"></textarea>
+      <small class="form-text text-muted">comprehensive text for this challenge</small>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <markdown [data]="challenge.text"></markdown>
+  </div>
+</div>
+

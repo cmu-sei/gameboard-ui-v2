@@ -1,0 +1,62 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="profile">
+  <div class="card">
+    <div class="card-header text-uppercase text-center">
+      <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          Select your Organization
+        </div>
+        <div class="col-lg-2">
+          <a class="pull-right" routerLink="../enrollment">Next <i class="fa fa-chevron-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="col-lg-10 offset-lg-1" *ngIf="canSelect()">
+        <p class="border-left border-warning p-2 ml-2">Please choose the organization you are associated with from the list below.</p>
+        <input type="text" class="form-control" placeholder="Filter" (keyup)="filter($event)">
+        <div class="row org p-1 m-1" *ngFor="let o of filteredOrgs" (click)="selected(o)" [class.active]="o === active">
+          <div class="col-lg-1">
+            <img class="rounded-logo" [src]="o.logo" alt="org" />            
+          </div>
+          <div class="col-lg-6">
+            {{o.title}}
+          </div>
+          <div class="col-lg-3">
+            {{o.name}}
+          </div>
+          <div class="col-lg-2">
+            <button *ngIf="o === active" class="btn btn-success" (click)="saveOrganization()">Save</button>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="!canSelect()">
+        <strong>
+          <img [src]="active.logo" max-height="128px" />
+          {{active.title}}
+        </strong>
+        <p class="border-left border-warning p-2 ml-2 mt-2">
+          You have already confirmed your membership with <strong>{{active.name}}</strong>.
+        </p>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
