@@ -1,0 +1,56 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="workspace">
+  <div class="row">
+    <div class="col-lg-6">
+      <div *ngIf="workspace.id"><strong>ID: </strong> {{ workspace.id }}</div>
+      <div *ngIf="workspace.customizeTemplates"><strong>Customize Templates: </strong> <i class="fa fa-check"></i></div>
+    </div>
+    <div class="col-lg-6">
+      <div *ngIf="workspace.templates"><strong>Templates: </strong> {{ workspace.templates }}</div>
+      <div *ngIf="workspace.iso"><strong>ISO: </strong> {{ workspace.iso }}</div>
+      <div *ngIf="workspace.isoTarget"><strong>ISO Target: </strong> {{ workspace.isoTarget }}</div>
+      <div *ngIf="workspace.hostAffinity"><strong>Host Affinity: </strong> <i class="fa fa-check"></i></div>
+      <div *ngIf="workspace.appendMarkdown"><strong>Append Markdown: </strong> <i class="fa fa-check"></i></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6" *ngIf="workspace.network">
+      <strong>Network</strong>
+      <div class="pl-2">
+        <div *ngIf="workspace.network.newIp"><strong>New IP:</strong> {{ workspace.network.newIp}}</div>
+        <strong>Hosts</strong>
+        <div *ngFor="let host of workspace.network.hosts">
+          {{ host }}
+        </div>
+        <strong>Dnsmasq</strong>
+        <div *ngFor="let dnsmasq of workspace.network.dnsmasq">
+          {{ dnsmasq }}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6" *ngIf="workspace.vms && workspace.vms.length > 0">
+      <strong>Virtual Machines</strong>
+      <div *ngFor="let vm of workspace.vms">
+        {{ vm.name }} - {{ vm.replicas }} {{ vm.skipIso ? ' - Skip ISO' : '' }}
+      </div>
+    </div>
+  </div>
+
+</ng-container>
+

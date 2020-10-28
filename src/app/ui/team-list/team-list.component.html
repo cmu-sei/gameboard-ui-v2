@@ -1,0 +1,313 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="isModerator || isObserver">
+  <div class="row">
+    <div class="col-lg-3">
+      <h3>Teams</h3>
+    </div>
+    <div class="col-lg-9 text-right">
+      <div class="btn-group btn-group-sm" dropdown>
+        <button id="report-items" dropdownToggle type="button" class="btn dropdown-toggle" aria-controls="reports" tooltip="Export">
+          <i class="fa fa-fw fa-download"></i> <span class="caret"></span>
+        </button>
+        <ul id="reports" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="report-items">
+          <li role="menuitem">
+            <a (click)="export()">Export Teams</a>
+          </li>
+          <li role="menuitem">
+            <a (click)="exportTeamActivity()" *ngIf="isModerator">Export Team Activity</a>
+          </li>
+        </ul>
+      </div>
+      <div class="btn-group" role="group" aria-label="Actions">
+        <button class="btn btn-link" [class.text-secondary]="!autorefresh" (click)="toggleAutoRefresh()" tooltip="Refresh"><i class="fa fa-refresh fa-fw"></i></button>
+        <button class="btn btn-link" *ngIf="isModerator" (click)="showSystemMessageDialog()" tooltip="Broadcast System Message"><i class="fa fa-comment fa-fw"></i></button>
+        <button class="btn btn-link" *ngIf="isModerator" [disabled]="selected.length == 0" (click)="openTeamMessage()" tooltip="Send Email Message"><i class="fa fa-envelope fa-fw"></i></button>
+        <button class="btn btn-link" *ngIf="isModerator" [disabled]="selected.length == 0" (click)="disable()" tooltip="Disable"><i class="fa fa-ban fa-fw"></i></button>
+        <button class="btn btn-link" *ngIf="isModerator" [disabled]="selected.length == 0" (click)="enable()" tooltip="Enable"><i class="fa fa-circle-o fa-fw"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-lg-3">
+      <select [(ngModel)]="dataFilter.sort" class="form-control form-control" name="sort" (change)="onSortChanged()" tooltip="Sort">
+        <option value="name">Name (ASC)</option>
+        <option value="-name">Name (DESC)</option>
+        <option value="organization">Organization (ASC)</option>
+        <option value="-organization">Organization (DESC)</option>
+        <option value="created">Created (ASC)</option>
+        <option value="-created">Created (DESC)</option>
+        <option value="start">Start (ASC)</option>
+        <option value="-start">Start (DESC)</option>
+        <option value="locked">Locked (ASC)</option>
+        <option value="-locked">Locked (DESC)</option>
+        <optgroup label="Gameboards">
+          <ng-container *ngFor="let b of gameboards">
+            <option [value]="'-board=' + b.id">{{ b.name }} Score (DESC)</option>
+            <option [value]="'board=' + b.id">{{ b.name }} Score (ASC)</option>
+          </ng-container>
+        </optgroup>
+      </select>
+    </div>
+    <div class="col-lg-2">
+      <select class="form-control form-control" [(ngModel)]="board" name="Gameboard" (change)="reset()" tooltip="Filter by Board">
+        <option value="">All Gameboards</option>
+        <option *ngFor="let b of boards" [value]="b.id">{{b.name}}</option>
+      </select>
+    </div>
+    <div class="col-lg-3">
+      <select class="form-control form-control" [(ngModel)]="organization" name="take" (change)="reset()" tooltip="Filter by Organization">
+        <option value="">All Organizations</option>
+        <option *ngFor="let organization of organizations" [value]="organization.name">{{organization.title}}</option>
+      </select>
+    </div>
+    <div class="col-lg-2">
+      <input type="text" class="form-control" [(ngModel)]="dataFilter.term" (keyup.enter)="reset()" placeholder="Search" />
+    </div>
+    <div class="col-lg-2">
+      <label *ngFor="let b of badges" (click)="onFilterBadgeSelect(b)">
+        <badge [badge]="b" [disabled]="filterBadges.indexOf(b) == -1"></badge>
+      </label>
+    </div>
+  </div>
+  <hr />
+  <div class="table-">
+    <pager *ngIf="teams" [pagedResult]="teams" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+    <table class="table table-striped table-dark">
+      <!--<colgroup>
+      <col *ngIf="isModerator" style="width: 10px" />
+      <col style="width: 20%" />
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+      <col style="width: 10%" />
+      <col style="width: 15%" />
+    </colgroup>-->
+      <thead>
+        <tr>
+          <th *ngIf="isModerator" scope="col">
+            <input type="checkbox" (change)="onAllTeamChange($event)" [checked]="selected && teams && selected.length === teams.results.length" />
+          </th>
+          <th scope="col" class="" colspan="2">Team</th>
+          <th scope="col" class="">Badges</th>
+          <th scope="col" class="">Organization</th>
+          <th scope="col" class="">Members</th>
+          <th scope="col" class="">Boards</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="teams">
+        <tr *ngFor="let t of teams.results; trackBy: trackTeamId" style="clear: both;">
+          <td *ngIf="isModerator">
+            <input type="checkbox" value="{{t.id}}" (change)="onTeamChange(t, $event)" [checked]="selected.includes(t)" />
+          </td>
+          <td>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Team Actions">
+              <button *ngIf="isModerator" class="btn btn-link" (click)="edit(t.id)" tooltip="Edit Team"><i class="fa fa-cog"></i></button>
+              <button *ngIf="isModerator" class="btn btn-link" (click)="resetTeam(t)" tooltip="Reset Team"><i class="fa fa-refresh"></i></button>
+            </div>            
+          </td>
+          <td>
+            <i *ngIf="t.isLocked" class="fa text-muted fa-lock mr-1" tooltip="Team is Locked"></i>
+            <i *ngIf="t.isDisabled" class="fa text-muted fa-ban mr-1" tooltip="Team is Disabled"></i>
+            <a [routerLink]="['/team', t.id, 'activity']" [tooltip]="t.name">{{t.name.length > 20 ? (t.name | slice:0:17) + '...' : (t.name)}}</a>
+            <div *ngIf="t.anonymizedName"><small class="text-muted">{{t.anonymizedName}}</small></div>
+            <div><small>{{t.created | date:'M/dd/yy HH:mm'}}</small></div>
+          </td>
+          <td>
+            <badge *ngFor="let b of t.badges" [badge]="b"></badge>
+          </td>
+          <td class=" "><img *ngIf="t.organizationLogoUrl" [src]="t.organizationLogoUrl" height="20px" class="mr-1 rounded-logo" alt="Team Logo">{{t.organizationName}}</td>
+          <td class=" ">
+            <div *ngFor="let m of t.members">
+              <button *ngIf="isModerator" class="btn btn-link btn-sm" (click)="openUserMessage(m)" tooltip="Send Email Message"><i class="fa fa-envelope"></i></button>
+              <small>{{m.name}}</small>
+            </div>&nbsp;
+          </td>
+          <td class="board-rows">
+            <div class="row" *ngFor="let tb of t.teamBoards">
+              <div class="col-lg-3" *ngIf="isModerator">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Board Actions">
+                  <button *ngIf="isModerator" class="btn btn-link" (click)="overrideTime(tb)" tooltip="Set Override Minutes"><i class="fa fa-history"></i></button>
+                  <button *ngIf="isModerator" class="btn btn-link" (click)="resetTeamBoard(tb)" tooltip="Reset Board"><i class="fa fa-refresh"></i></button>
+                </div>                
+              </div>
+              <div [ngClass]="{'col-lg-9': isModerator, 'col-lg-12': !isModerator }">
+                {{tb.board ? tb.board.name : '-' }}
+                <span *ngIf="isModerator && tb.overrideMaxMinutes" class="badge badge-pill badge-warning" tooltip="Override Minutes">{{tb.overrideMaxMinutes}}</span>
+                <span class="badge badge-pill badge-success-alt">{{tb.score}}</span>
+                <span *ngIf="tb.state && tb.state.expired">Finished</span>
+                <span *ngIf="tb.state && tb.state.timespan">{{ tb.state.timespan | timespan:'analog' }}</span>
+              </div>
+            </div>
+            <div *ngIf="!t.teamBoards || t.teamBoards.length == 0">No Boards Started</div>&nbsp;
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <pager *ngIf="teams" [pagedResult]="teams" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+  </div>
+</ng-container>
+
+<div bsModal #startModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="model">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Edit Team</h4>
+        <i class="fa fa-times fa-pull-right" (click)="startModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label>Team Name</label>
+              <input type="text" class="form-control" placeholder="Team Name" [(ngModel)]="model.name" maxlength="50">
+            </div>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" (click)="save()">Save</button>
+          <span *ngIf="saved" class="text text-success"><i class="fa fa-check"></i></span>
+          <p *ngIf="errorMsg" class="alert alert-danger alert-dismissible fade show" role="alert" (click)="errorMsg=''">
+            {{ errorMsg }} <i class="pull-right fa fa-times fa-fw" (click)="errorMsg=''"></i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #messageModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="message">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Send {{ messageMode }} Message</h4>
+        <i class="fa fa-times fa-pull-right" (click)="messageModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label>To</label>
+              <span class="badge badge-info" *ngFor="let name of to">{{ name }}</span>
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" class="form-control" placeholder="Subject" [(ngModel)]="message.subject" maxlength="100">
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label>Body</label>
+              <textarea class="form-control" placeholder="Body" [(ngModel)]="message.body" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" (click)="sendMessage()" [disabled]="message.error || message.success">Send</button>
+          <p *ngIf="message.error" class="alert alert-danger mt-2" role="alert" (click)="messageModal.hide()">
+            <i class="fa fa-exclamation"></i> {{ message.error }}
+          </p>
+          <p *ngIf="message.success" class="alert alert-success mt-2" role="alert" (click)="messageModal.hide()">
+            <i class="fa fa-check"></i> {{ message.success }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #overrideModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="currentTeamBoard">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Override Board Time</h4>
+        <i class="fa fa-times fa-pull-right" (click)="overrideModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label>Override Max Minutes</label>
+              <input type="text" class="form-control" placeholder="Override Max Minutes" [(ngModel)]="currentTeamBoard.overrideMaxMinutes" maxlength="50">
+            </div>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" (click)="overrideMaxMinutes()">Save</button>
+          <span *ngIf="overrideSaved" class="text text-success"><i class="fa fa-check"></i></span>
+          <p *ngIf="errorMsg" class="alert alert-danger alert-dismissible fade show" role="alert" (click)="errorMsg=''">
+            {{errorMsg}}
+            <i class="pull-right fa fa-times fa-fw" (click)="errorMsg=''"></i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #confirmModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start" [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="confirm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{ confirm.title }}</h4>
+        <i class="fa fa-times fa-pull-right" (click)="hideConfirm()"></i>
+      </div>
+      <div class="modal-body text-center">
+        <p>{{ confirm.message }}</p>
+      </div>
+      <div class="modal-footer text-center">
+        <button class="btn btn-danger" (click)="onConfirm()" [disabled]="pending">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #systemMessageModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Send System Message</h4>
+        <i class="fa fa-times fa-pull-right" (click)="systemMessageModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label>Send a message to all logged in users</label>
+              <textarea type="text" class="form-control" placeholder="System Message . . . " [(ngModel)]="systemMessage" maxlength="500" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" (click)="sendSystemMessage()">Send Message</button>
+          <span *ngIf="systemMessageSent" class="text text-success"><i class="fa fa-check"></i></span>
+          <p *ngIf="errorMsg" class="alert alert-danger alert-dismissible fade show" role="alert" (click)="errorMsg=''">
+            {{errorMsg}}
+            <i class="pull-right fa fa-times fa-fw" (click)="errorMsg=''"></i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

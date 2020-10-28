@@ -1,0 +1,94 @@
+/*
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+*/
+
+@import '../../../../scss/variables';
+
+.modal {
+  position: absolute;
+}
+
+.coordinate {
+  fill: $yellow;
+  opacity: .6;
+}
+
+.coordinate-container {
+  position: relative;
+}
+
+.coordinate-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, .8);
+  color: #fff;
+  height: 200px;
+  width: 400px;
+  padding: 10px 15px;
+  display: none;
+  border-radius: 10px;
+  border: solid 3px $gray-700;
+}
+
+.coordinate-tooltip.disabled {
+  color: #aaa;
+}
+
+.coordinate-container:hover .coordinate-tooltip {
+  visibility: visible;
+}
+
+.coordinate:hover {
+  cursor: pointer;
+  opacity: .5;
+}
+
+.points {
+  font-size: 10%;
+  fill: $white;
+}
+
+.coordinate-border {
+  fill: transparent;
+}
+
+.pending,
+.ready {
+  fill: $white;
+}
+
+.error {
+  /*stroke: $red;*/
+}
+
+.working {
+  fill: $gray-600;
+}
+
+.complete {
+  fill: $gray-900;
+}
+
+.success {
+  fill: $green;
+}
+
+.failure {
+  fill: $danger;
+}
+
+.badge {
+  font-size: 10pt;
+  font-weight: normal;
+}
+

@@ -1,0 +1,58 @@
+[
+  {
+    "text": "Please rate the difficulty of this challenge",
+    "type": "radio",
+    "options": [
+      {
+        "label": "1. Very Easy",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      },
+      {
+        "label": "3",
+        "value": "3"
+      },
+      {
+        "label": "4",
+        "value": "4"
+      },
+      {
+        "label": "5. Very Difficult",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "text": "Please rate the quality of this challenge",
+    "type": "radio",
+    "options": [
+      {
+        "label": "1. Poor",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      },
+      {
+        "label": "3",
+        "value": "3"
+      },
+      {
+        "label": "4",
+        "value": "4"
+      },
+      {
+        "label": "5. Excellent",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "text": "How would you improve this challenge?",
+    "type": "textarea"
+  }
+]

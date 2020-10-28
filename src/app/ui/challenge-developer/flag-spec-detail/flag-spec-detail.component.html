@@ -1,0 +1,50 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="row">
+  <div class="col-lg-6" *ngIf="flag.value"><strong>Value: </strong> {{ flag.value }}</div>
+  <div class="col-lg-6" *ngIf="flag.type"><strong>Type: </strong> {{ flag.type }}</div>
+  <div class="col-lg-6" *ngIf="flag.tokens"><strong>Tokens: </strong> {{ flag.tokens.length }}</div>
+  <div class="col-lg-6" *ngIf="flag.tokens && flag.tokens.length > 1"><strong>Multi Part: </strong> <i class="fa fa-check"></i></div>
+  <div class="col-lg-6" *ngIf="flag.files && flag.files.length > 0">
+    <strong>Files: </strong>
+    <div *ngFor="let file of flag.files">
+      {{ file }}
+    </div>
+  </div>
+  <div class="col-lg-6" *ngIf="flag.iso"><strong>ISO: </strong> {{ flag.iso }}</div>
+  <div class="col-lg-6" *ngIf="flag.isoRestricted"><strong>ISO Restricted: </strong> <i class="fa fa-check"></i></div>
+  <div class="col-lg-6" *ngIf="flag.generateOutputText"><strong>Generate Output Text: </strong> {{ flag.generateOutputText }}</div>
+  <div class="col-lg-6" *ngIf="flag.generateOutputFlag"><strong>Generate Output Flag: </strong> {{ flag.generateOutputFlag }}</div>
+  <div class="col-lg-6" *ngIf="flag.generateOutputFileList"><strong>Generate Output File List: </strong> {{ flag.generateOutputFileList }}</div>
+  <div class="col-lg-6" *ngIf="flag.generateCommand"><strong>Generate Command: </strong> {{ flag.generateCommand }}</div>
+  <div class="col-lg-6" *ngIf="flag.generateImage"><strong>Generate Image: </strong> {{ flag.generateImage }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeInputFlag"><strong>Grade Input Flag: </strong> {{ flag.gradeInputFlag }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeInputData"><strong>Grade Input Data: </strong> {{ flag.gradeInputData }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeInputFile"><strong>Grade Input File: </strong> {{ flag.gradeInputFile }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeOutputFile"><strong>Grade Output File: </strong> {{ flag.gradeOutputFile }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeCommand"><strong>Grade Command: </strong> {{ flag.gradeCommand }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeImage"><strong>Grade Image: </strong> {{ flag.gradeImage }}</div>
+  <div class="col-lg-6" *ngIf="flag.gradeCommandTimeout"><strong>Grade Command Timeout: </strong> {{ flag.gradeCommandTimeout }}</div>
+</div>
+<ng-container *ngIf="flag.text">
+  <hr />
+  <strong>Text</strong>
+  <markdown [data]="flag.text"></markdown>
+</ng-container>
+
+

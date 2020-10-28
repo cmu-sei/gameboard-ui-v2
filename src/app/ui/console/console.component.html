@@ -1,0 +1,118 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="console-wrapper">
+
+  <div #consoleCanvas id="console-canvas-" [class.canvas]="!viewOnly" [class.embedded]="viewOnly"
+    [class.mock-console-connected]="showMockConnected()">
+
+    <button *ngIf="isConnected && showCog && !viewOnly" class="btn btn-secondary overlay overlay-tl cog"
+      (click)="showUtilities()">
+      <i class="fa fa-cog fa-2x"></i>
+    </button>
+
+    <span class="overlay overlay-tl overlay-tl-offset">{{shadowstate}}</span>
+
+    <button #stateBtn *ngIf="stateIcon" class="btn btn-secondary state-btn overlay overlay-mm"
+      [class.hidden]="isConnected" (click)="stateButtonClicked()">
+      <i class="fa fa-{{stateIcon}}"></i>
+    </button>
+
+  </div>
+
+  <div *ngIf="isConnected && showTools" class="tools">
+
+    <div class="btn-group-vertical mb-2">
+      <button class="btn btn-secondary cog" (click)="showUtilities()">
+        <i class="fa fa-cog fa-2x"></i>
+      </button>
+    </div>
+
+    <div class="btn-group-vertical mb-2">
+      <button class="btn btn-secondary btn-tool" (click)="start()">
+        <i class="fa fa-power-off fa-2x"></i> Reset
+      </button>
+      <button class="btn btn-secondary btn-tool" (click)="console.sendCAD()">
+        <i class="fa fa-keyboard-o fa-2x"></i> Send Ctrl-Alt-Del
+      </button>
+    </div>
+
+    <div class="px-4">
+      <p><small>
+          If the "Settings" button is in the way, hide it here. If hidden, you can
+          open the settings panel by moving the mouse to the left edge of the console.
+        </small></p>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="showCog" [(ngModel)]="showCog">
+        <label class="form-check-label" for="showCog">Show Settings Button</label>
+      </div>
+    </div>
+
+    <div class="btn-group-vertical mb-2">
+      <button class="btn btn-secondary btn-tool" (click)="enterFullscreen()">
+        <i class="fa fa-arrows-alt fa-2x"></i> Fullscreen
+      </button>
+      <button class="btn btn-secondary btn-tool" (click)="console.showKeyboard()">
+        <i class="fa fa-keyboard-o fa-2x"></i> Touch Keyboard
+      </button>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-secondary btn-tool" (click)="showClipboard=!showClipboard">
+        <i class="fa fa-clipboard fa-2x"></i> Clipboard
+      </button>
+    </div>
+
+    <div *ngIf="showClipboard">
+      <p class="pt-2 px-4">
+        <small>
+          COPY transfers the vm clip to <em>your</em> clipboard.
+          Select/Copy text in the vm using crtl-c or context menu
+          before clicking COPY here. (Clicking COPY shows text
+          below *AND* adds to your clipboard.)
+        </small>
+      </p>
+      <p class="px-4">
+        <small>
+          PASTE sends the text below to the vm.
+          Ensure the vm cursor is focused in a window that
+          accepts keyboard input before clicking PASTE here.
+        </small>
+      </p>
+    </div>
+    <div *ngIf="showClipboard" class="btn-group">
+      <button class="btn btn-secondary btn-tool" (click)="clip()">
+        <i *ngIf="!justClipped" class="fa fa-long-arrow-down"></i>
+        <i *ngIf="justClipped" class="text-success fa fa-check"></i>
+        Copy
+      </button>
+      <button class="btn btn-secondary btn-tool" (click)="paste()">
+        <i *ngIf="!justPasted" class="fa fa-long-arrow-up"></i>
+        <i *ngIf="justPasted" class="text-success fa fa-check"></i>
+        Paste
+      </button>
+      <button class="btn btn-secondary btn-tool" (click)="cliptext=''">
+        <i class="fa fa-remove"></i> Clear
+      </button>
+    </div>
+
+    <textarea *ngIf="showClipboard" class="form-control" placeholder="Clipboard" rows="20"
+      [(ngModel)]="cliptext"></textarea>
+
+  </div>
+</div>
+

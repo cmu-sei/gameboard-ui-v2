@@ -1,0 +1,70 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<nav class="board-header mb-2" *ngIf="board">
+  <div class="row">
+    <div class="col-lg-4">
+      <h3>
+        <a [routerLink]="['/board', board.id]">{{board.name}}</a>
+        <span class="text-muted" *ngIf="!!teamBoard && !teamBoard.state.expired && !!teamBoard.state.timespan" tooltip="Session&nbsp;Time&nbsp;Remaining">
+          {{teamBoard.state?.timespan | timespan}}
+        </span>
+        <span class="text-muted" *ngIf="!!teamBoard && !teamBoard.state.timespan && !teamBoard.state.expired && !!board.state && !!board.state.timespan" tooltip="Board&nbsp;Time&nbsp;Remaining">
+          {{board.state?.timespan | timespan }}
+        </span>
+        <span class="text-muted ml-1" *ngIf="!!board.state && !board.state.expired && !!teamBoard && !!teamBoard.state && teamBoard.state.expired">(expired)</span>
+        <span class="text-muted ml-1" *ngIf="!!board.state && board.state.expired">(closed)</span>
+        <!--<span class="text-muted" *ngIf="teamBoard.state.pending && boardState.time">(begins in {{ teamBoard.state.timer | counter }})</span>-->
+        <!--<span class="text-muted" *ngIf="!teamBoard.state.ended && teamBoard.state.time">(ends in {{ teamBoard.state.timer | counter }})</span>-->
+      </h3>
+    </div>
+    <!--<div class="col-lg-3 text-center">
+      <ul class="timespan" *ngIf="!!teamBoard && !teamBoard.state.expired && !!teamBoard.state.timespan" tooltip="Session&nbsp;Time&nbsp;Remaining">
+        <li><span>{{(teamBoard.state?.timespan | timespan:'object').hours}}</span></li>
+        <li><span>{{(teamBoard.state?.timespan | timespan:'object').minutes}}</span></li>
+        <li><span>{{(teamBoard.state?.timespan | timespan:'object').seconds}}</span></li>
+      </ul>
+      <ul class="timespan" *ngIf="!!teamBoard && !teamBoard.state.timespan && !teamBoard.state.expired && !!board.state && !!board.state.timespan" tooltip="Board&nbsp;Time&nbsp;Remaining">
+        <li><span>{{(board.state?.timespan | timespan:'object').hours}}</span></li>
+        <li><span>{{(board.state?.timespan | timespan:'object').minutes}}</span></li>
+        <li><span>{{(board.state?.timespan | timespan:'object').seconds}}</span></li>
+      </ul>
+    </div>-->
+    <div class="col-lg-4 text-right">
+
+    </div>
+    <div class="col-lg-4 text-right">
+      <span class="fa-stack fa-lg certificate-download mr-2" tooltip="Download Certificate"
+            *ngIf="!!teamBoard && board.certificateThreshold > 0 && teamBoard.score >= board.certificateThreshold"
+            (click)="onDownloadCertificate()">
+        <i class="fa fa-certificate fa-stack-2x text-success"></i>
+        <i class="fa fa-download fa-stack-1x text-white"></i>
+      </span>
+      <button type="button" class="btn btn-warning text-uppercase"
+              *ngIf="isResetVisible && board.isResetAllowed && !!teamBoard && isTeamOwner"
+              (click)="onReset()" tooltip="Reset&nbsp;Board">
+        Reset
+      </button>
+      <button type="button" class="btn btn-success text-uppercase"
+              *ngIf="isStartVisible && board.isStartAllowed && board.state && board.state.active && !teamBoard && isTeamOwner"
+              (click)="onStart()" tooltip="Start&nbsp;Board">
+        Start
+      </button>
+    </div>
+  </div>
+</nav>
+

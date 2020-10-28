@@ -1,0 +1,98 @@
+/*
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+*/
+
+@import '../../../../scss/variables';
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.col {
+  padding-left: 0;
+  padding-right: 5px;
+}
+
+.col:last-child {
+  padding-right: 0;
+}
+
+.category {
+  height: 100px;
+  padding: 20px 10px;
+  margin-bottom: 5px;
+}
+
+.question {
+  height: 150px;
+  padding: 35px 10px;
+  margin-bottom: 5px;
+  font-size: 3vw;
+  font-weight: 800;
+  text-shadow: 2px 2px 3px #000;
+  cursor: pointer;
+  color: $yellow;
+
+  .title {
+    font-size: 10pt;
+  }
+}
+
+.question.with-title {  
+  padding-top: 20px;
+}
+
+.category {
+  font-size: 1.2vw;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-shadow: 2px 2px 3px #222;
+  color: $white;
+}
+
+.question.pending,
+.question.ready {
+  color: $white;
+}
+
+.question.working {
+  color: $gray-600;
+}
+
+.question.complete {
+  color: $gray-900;
+}
+
+.question.success {
+  color: $green;
+}
+
+.question.failure {
+  color: $danger;
+}
+
+.question.disabled {
+  color: $gray-500;
+}
+
+.trivia .col > .category,
+.trivia .col > .question {
+  width: 100%;
+  justify-content: center;  
+  text-align: center;  
+  border: .5px solid $gray-600;
+  background-color: #205493;
+}
+

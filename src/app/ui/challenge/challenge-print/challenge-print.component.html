@@ -1,0 +1,77 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container *ngIf="challengeProblem && teamBoard && teamBoard.state">
+  <div class="card" *ngIf="challengeProblem.state.isActive && teamBoard.state.active">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2">
+        </div>
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header"><h3>{{challengeProblem.board.name}} Gameboard</h3></div>
+            <div class="card-body">
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h4>{{challengeProblem.challenge.title}}</h4></div>
+            <div class="card-body">
+              <div>{{challengeProblem.challenge.tags}}</div>
+              <div><markdown>{{challengeProblem.challenge.description}}</markdown></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h4>Instructions</h4>
+            </div>
+            <div class="card-body">
+              <markdown>{{challengeProblem.problem.text}}</markdown>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h4>Gamespace</h4>
+            </div>
+            <div class="card-body">
+              <ng-container *ngIf="!challengeProblem.problem.hasGamespace">
+                <div class="alert alert-dark text-center">This challenge has no virtual gamespace.</div>
+              </ng-container>
+              <ng-container *ngIf="challengeProblem.problem.hasGamespace">
+                <div class="alert alert-dark text-center">This challenge has a virtual gamespace.</div>
+                <markdown *ngIf="challengeProblem.problem.gamespaceText" [data]="challengeProblem.problem.gamespaceText"></markdown>
+                <div class="row">
+                  <p>
+                    The number of concurrent gamespaces you can have running is limited.
+                    If you started this challenge, but decide to move on to another
+                    challenge without finishing it, you can delete this gamespace.
+                    The challenge timer will not stop.
+                  </p>
+                </div>
+              </ng-container>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success btn-sm" (click)="printChallengeInstructions('printChallengeInstructions', 'Challenge Instructions')">Print</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2">
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+

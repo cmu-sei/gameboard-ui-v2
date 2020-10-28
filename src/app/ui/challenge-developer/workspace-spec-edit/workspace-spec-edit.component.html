@@ -1,0 +1,105 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="form-group">
+      <input name="id" [(ngModel)]="workspace.id" type="number" class="form-control form-control-sm" placeholder="Workspace ID">
+      <small class="form-text text-muted">ID</small>
+    </div>
+    <div class="form-check mb-2">
+      <input name="customizeTemplates" [(ngModel)]="workspace.customizeTemplates" type="checkbox" class="form-check-input">
+      <label class="form-check-label">Customize Templates</label>
+      <div class="form-text text-muted">if checked the templates for this workspace are fetched and saved as <code>_templates.json.</code></div>
+    </div>
+    <div class="form-group">
+      <input name="templates" [(ngModel)]="workspace.templates" type="text" class="form-control form-control-sm" placeholder="Templates">
+      <small class="form-text text-muted">Templates</small>
+    </div>
+    <div class="form-group">
+      <input name="iso" [(ngModel)]="workspace.iso" type="text" class="form-control form-control-sm" placeholder="ISO">
+      <small class="form-text text-muted">ISO</small>
+    </div>
+    <div class="form-group">
+      <input name="isoTarget" [(ngModel)]="workspace.isoTarget" type="text" class="form-control form-control-sm" placeholder="ISO Target">
+      <small class="form-text text-muted">ISO Target</small>
+    </div>
+    <div class="form-check">
+      <input name="hostAffinity" [(ngModel)]="workspace.hostAffinity" type="checkbox" class="form-check-input">
+      <label class="form-check-label">Host Affinity</label>
+    </div>
+    <div class="form-check">
+      <input name="appendMarkdown" [(ngModel)]="workspace.appendMarkdown" type="checkbox" class="form-check-input">
+      <label class="form-check-label">Append Markdown</label>
+    </div>    
+  </div>
+  <div class="col-lg-6">
+    <h5>
+      Network
+      <button *ngIf="!workspace.network" type="button" class="btn btn-secondary btn-sm pull-right" (click)="workspace.network = { hosts: [''], newIp: '', dnsmasq: ['']}"><i class="fa fa-plus"></i></button>
+      <button *ngIf="workspace.network" type="button" class="btn btn-secondary btn-sm pull-right" (click)="workspace.network = null"><i class="fa fa-minus"></i></button>
+    </h5>
+    <div *ngIf="workspace.network" class="p-2 mt-3" style="background: #777;">
+      <div class="form-group">
+        <input name="newIp" [(ngModel)]="workspace.network.newIp" type="text" class="form-control form-control-sm" placeholder="New IP">
+      </div>
+      <div class="clearfix mb-2">
+        <strong>Hosts</strong>
+        <i class="fa fa-plus pull-right" (click)="workspace.network.hosts.push('')"></i>
+      </div>
+      <div class="row" *ngFor="let host of workspace.network.hosts; let in=index;trackBy:trackByFn">
+        <div class="col-lg-11">
+          <div class="form-group">
+            <input [(ngModel)]="workspace.network.hosts[in]" type="text" class="form-control form-control-sm" placeholder="Host">
+          </div>
+        </div>
+        <div class="col-lg-1">
+          <i class="fa fa-minus pull-right" (click)="removeHost(workspace.network, in)"></i>
+        </div>
+      </div>
+      <div class="clearfix mb-2">
+        <strong>Dnsmasq</strong>
+        <i class="fa fa-plus pull-right" (click)="workspace.network.dnsmasq.push('')"></i>
+      </div>
+      <div class="row mb-1" *ngFor="let dnsmasq of workspace.network.dnsmasq; let in=index; trackBy:trackByFn">
+        <div class="col-lg-11">
+          <div class="form-group">
+            <input [(ngModel)]="workspace.network.dnsmasq[in]" type="text" class="form-control form-control-sm" placeholder="Dnsmasq">
+          </div>
+        </div>
+        <div class="col-lg-1">
+          <i class="fa fa-minus pull-right" (click)="removeDnsmasq(workspace.network, in)"></i>
+        </div>
+      </div>
+    </div>
+    <h5 class="clearfix pt-2">
+      Virtual Machines
+      <button type="button" class="btn btn-secondary btn-sm pull-right" (click)="workspace.vms.push({ name: '', replicas: null })"><i class="fa fa-plus"></i></button>
+    </h5>
+    <div class="p-2 mt-3" style="background: #777;" *ngIf="workspace.vms.length > 0">
+      <div class="row" *ngFor="let vm of workspace.vms; let in=index;">
+        <div class="col-lg-11">
+          <app-vm-spec-edit [vm]="vm"></app-vm-spec-edit>
+        </div>
+        <div class="col-lg-1">
+          <i class="fa fa-minus pull-right" (click)="removeVm(in)"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

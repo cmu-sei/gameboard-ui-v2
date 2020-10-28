@@ -1,0 +1,165 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<ng-container>
+  <div class="row mb-3">
+    <div class="col-lg-3">
+      <select class="form-control form-control" [(ngModel)]="id" name="take" (change)="onBoardChanged()">
+        <option *ngIf="!leaderboard" value="">Select...</option>
+        <option *ngFor="let b of boards" [value]="b.id">{{b.name}} Leaderboard</option>
+      </select>
+    </div>
+    <div class="col-lg-5">
+      <select class="form-control form-control" [(ngModel)]="selectedOrg" name="take" (change)="filterByOrg()">
+        <option value="">All Organizations</option>
+        <option *ngFor="let o of orgs" [value]="o.name">{{o.title}}</option>
+      </select>
+    </div>
+    <div class="col-lg-2">
+      <badge *ngFor="let b of badges" [badge]="b.key"></badge>
+    </div>
+    <div class="col-lg-2 text-right" *ngIf="isModerator">
+      <div class="btn-group" role="group" aria-label="Actions">
+        <button class="btn btn-link" (click)="export()" tooltip="Export to CSV"><i class="fa fa-download fa-fw"></i></button>
+        <button class="btn btn-link" [disabled]="selected.length == 0" (click)="openAwardBadge()" tooltip="Manage Badges">
+          <badge badge="?"></badge>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="leaderboard">
+    <p *ngIf="leaderboard.isEmpty" class="lead">
+      Check back later for rankings.
+    </p>
+    <p>
+      <span class="badge badge-secondary text-uppercase mr-1 px-2 py-1">Total: {{leaderboard.totalTeams}}</span>
+      <span class="badge badge-success text-uppercase mr-1 px-2 py-1">Active: {{leaderboard.totalActive}}</span>
+    </p>
+    <table *ngIf="!leaderboard.isEmpty" class="table table-striped table-dark">
+      <thead>
+        <tr>
+          <th *ngIf="isModerator" scope="col">
+            <input type="checkbox" (change)="onAllTeamChange($event)" [checked]="selected && leaderboard && selected.length === leaderboard.results.length" />
+          </th>
+          <th scope="col">Rank</th>
+          <th scope="col" colspan="3">{{heading}}</th>
+          <th scope="col">Score</th>
+          <th scope="col">
+            Cumulative Time
+            <i class="fa fa-info-circle text-success ml-1 tooltip-btn"
+               tooltip="In the event of a tie score,
+               the sum of time taken to solve each individual challenge
+               will be used as a tie breaker. The lowest time wins.
+               Challenges can be worked in parallel; thus, the sum may exceed the session duration."></i>
+          </th>
+          <th scope="col">Challenges Solved</th>
+          <th scope="col">Partially Solved</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let l of leaderboard.results; trackBy: trackTeamId">
+          <td *ngIf="isModerator" scope="col">
+            <input type="checkbox" value="{{l}}" (change)="onTeamChange(l, $event)" [checked]="selected.includes(l)" />
+          </td>
+          <th scope="row">{{l.rank}}</th>
+          <td>
+            <img *ngIf="l.organizationLogoUrl" [src]="l.organizationLogoUrl" class="mr-1 rounded-logo organization-logo" alt="Team Logo">
+            {{l.name}}
+            <span *ngIf="isModerator || isObserver" class="mx-1">
+              <a [routerLink]="['/team', l.id, 'activity']">
+                <i class="fa fa-group fa-fw"></i>
+              </a>
+            </span>
+            <span class="badge badge-success" *ngIf="l.isActive">{{l.timer}} remaining</span>
+          </td>
+          <td>
+            <badge *ngFor="let b of l.badges" [badge]="b"></badge>
+          </td>
+          <td>
+            <span class="text-muted" *ngIf="l.anonymizedName != l.teamName">{{l.anonymizedTeamName}}</span>
+          </td>
+          <td>{{l.score}}</td>
+          <td>{{l.duration | timespan }}</td>
+          <td>{{l.counts.success }}</td>
+          <td>{{l.counts.partial }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col-auto">
+        <p>{{leaderboard.total}} Total Rankings</p>
+      </div>
+      <div class="col-auto ml-auto">
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button *ngIf="showBack()" (click)="pageBack()" type="button" class="btn btn-secondary">
+            <span>&laquo;</span>
+            <span class="ml-1">Previous</span>
+          </button>
+          <button *ngIf="showForward()" (click)="pageForward()" type="button" class="btn btn-secondary">
+            <span class="mr-1">Next</span>
+            <span>&raquo;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div bsModal #badgeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+       [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="dialog-child-name" class="modal-title pull-left">Manage Badges</h4>
+          <i class="fa fa-times fa-pull-right" (click)="badgeModal.hide()"></i>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped table-dark">
+            <thead>
+              <tr>
+                <th rowspan="2">Rank</th>
+                <th rowspan="2">Team</th>
+                <th rowspan="2">Score</th>
+                <th>Badges</th>
+              </tr>
+              <tr>
+                <th>
+                  <badge *ngFor="let b of badges" [badge]="b.key" (click)="addAll(b.key)"></badge>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let l of teamBadgeUpdates">
+                <td>{{l.rank}}</td>
+                <td>
+                  <img *ngIf="l.organizationLogoUrl" [src]="l.organizationLogoUrl" class="mr-1 rounded-logo organization-logo" alt="Team Logo">
+                  {{l.name}}
+                </td>
+                <td>{{l.score}}</td>
+                <td>
+                  <badge *ngFor="let b of badges" [badge]="b.key" (click)="toggleBadge(l, b.key)" [disabled]="!hasBadge(l, b.key)"></badge>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div>
+            <button class="btn btn-primary" (click)="updateBadges()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+

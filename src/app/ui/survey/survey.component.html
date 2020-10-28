@@ -1,0 +1,55 @@
+<!--
+
+Gameboard
+
+Copyright 2020 Carnegie Mellon University.
+
+NO WARRANTY. THIS CARNEGIE MELLON UNIVERSITY AND SOFTWARE ENGINEERING INSTITUTE MATERIAL IS FURNISHED ON AN "AS-IS" BASIS. CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER EXPRESSED OR IMPLIED, AS TO ANY MATTER INCLUDING, BUT NOT LIMITED TO, WARRANTY OF FITNESS FOR PURPOSE OR MERCHANTABILITY, EXCLUSIVITY, OR RESULTS OBTAINED FROM USE OF THE MATERIAL. CARNEGIE MELLON UNIVERSITY DOES NOT MAKE ANY WARRANTY OF ANY KIND WITH RESPECT TO FREEDOM FROM PATENT, TRADEMARK, OR COPYRIGHT INFRINGEMENT.
+
+Released under a MIT (SEI)-style license, please see license.txt or contact permission@sei.cmu.edu for full terms.
+
+[DISTRIBUTION STATEMENT A] This material has been approved for public release and unlimited distribution.  Please see Copyright notice for non-US Government use and distribution.
+
+DM20-0284
+
+
+-->
+
+<div class="card">
+  <div class="card-header">Feedback</div>
+  <div class="card-body">
+
+    <div *ngIf="complete" class="mb-2 alert alert-success">Thank you for the feedback!</div>
+
+    <div *ngIf="message" class="alert alert-dark text-center text-info">{{ message }}</div>
+
+    <ul class="list-unstyled">
+
+      <li *ngFor="let s of survey; let qi = index" class="question mb-2 p-2">
+
+        <span [ngClass]="{ 'text-danger': answers[qi].error && answers[qi].value == '' }">{{ s.text }}</span>
+
+        <div *ngIf="s.type === 'radio'" class="ml-4 text-info">
+
+          <div *ngFor="let o of s.options let oi = index"
+            class="form-check form-check-inline pr-4"
+          >
+            <input class="form-check-input" [disabled]="disabled || complete" [(ngModel)]="answers[qi].value" type="radio" name="option-{{qi}}{{oi}}" id="option-{{qi}}{{oi}}" [value]="o.value">
+            <label class="form-check-label" for="option-{{qi}}{{oi}}">{{ o.label }}</label>
+          </div>
+
+        </div>
+
+        <div *ngIf="s.type === 'textarea'" class="mx-4">
+          <textarea class="form-control" [disabled]="disabled || complete" [(ngModel)]="answers[qi].value" rows="3"></textarea>
+        </div>
+        <!-- <hr /> -->
+      </li>
+
+    </ul>
+
+    <button *ngIf="!complete" class="btn btn-primary" (click)="save()" [disabled]="disabled || complete">Submit</button>
+
+  </div>
+</div>
+
