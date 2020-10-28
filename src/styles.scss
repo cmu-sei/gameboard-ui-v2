@@ -1,0 +1,288 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+/* You can add global styles to this file, and also import other style files */
+@import './scss/variables';
+
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/root";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/code";
+@import "../node_modules/bootstrap/scss/alert";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/button-group";
+@import "../node_modules/bootstrap/scss/input-group";
+@import "../node_modules/bootstrap/scss/card";
+@import "../node_modules/bootstrap/scss/badge";
+@import "../node_modules/bootstrap/scss/jumbotron";
+@import "../node_modules/bootstrap/scss/navbar";
+@import "../node_modules/bootstrap/scss/media";
+@import "../node_modules/bootstrap/scss/utilities";
+@import "../node_modules/bootstrap/scss/list-group";
+@import "../node_modules/bootstrap/scss/tooltip";
+@import "../node_modules/bootstrap/scss/tables";
+@import "../node_modules/bootstrap/scss/modal";
+@import "../node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+
+@import './scss/bootswatch';
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.card {
+  margin-bottom: 25px;
+}
+
+.card-header {
+  background-color: #303030;
+}
+
+.card-body {
+  background-color: #444444;
+}
+
+blockquote {
+  border-left: 0.4em solid rgba(80, 80, 80, .75);
+  padding-left: 1em;
+  // margin: 0 1rem;
+}
+
+pre {
+  background-color: rgba(80, 80, 80, .75);
+  padding: 1rem 2rem;
+  border-radius: 4px;
+}
+
+.btn-vm {
+  margin: 8px 16px;
+}
+
+markdown {
+  color: lightgray;
+
+  strong {
+    color: white;
+  }
+
+  h1 {
+    color: gray;
+  }
+
+  h2 {
+    color: darkgray;
+  }
+
+  h4 {
+    color: $green;
+  }
+
+  .faq {
+    color: white;
+    font-size: 1.2em;
+  }
+
+  .card {
+    padding: 4px 8px;
+  }
+
+  table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+
+    td, th {
+      padding: .75rem;
+      vertical-align: top;
+    }
+
+    td {
+      border-top: 1px solid #dee2e6;
+    }
+
+    thead th {
+      vertical-align: bottom;
+      border-bottom: 2px solid #dee2e6;
+    }
+  }
+}
+
+.badge.badge-success-alt,
+.btn-success-alt {
+  background-color: $green;
+}
+
+.rounded-logo {
+  border-radius: 50%;
+  background-color: #FFF;
+}
+
+
+.modal-body .team-badge {
+  cursor: pointer;
+}
+
+.tooltip-inner {
+  background-color: $green;
+  color: #fff;
+}
+
+.tooltip.top .tooltip-arrow:before,
+.tooltip.top .tooltip-arrow {
+  border-top-color: $green;
+}
+
+.nav-tabs .nav-link.active {
+  color: #000 !important
+}
+
+.snack .snack-action:before {
+  text-transform: none;
+}
+
+.gameboard {
+  height: 100%;
+  display: grid;
+  grid-auto-rows: 1fr;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+  color: #ddd;
+}
+
+.gameboard > * {
+  border: .5px solid #4f5d6e;
+  background-color: rgba(32, 84, 147, .8);
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  display: inline-grid;
+}
+
+.gameboard .gameboard-category {
+  font-size: 1.2vw;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-shadow: 2px 2px 3px #222;
+}
+
+.text-small{
+    font-size: .9em;
+}
+
+.gameboard .gameboard-challenge {
+  font-size: 3vw;
+  font-weight: 800;
+  text-shadow: 2px 2px 3px #000;
+  cursor: pointer;
+  color: #b5ae2b;
+  cursor: pointer;
+}
+
+.gameboard-challenge {
+  font-size: 3vw;
+  font-weight: 800;
+  text-shadow: 2px 2px 3px #000;
+  color: #b5ae2b;
+}
+
+.gameboard .gameboard-challenge.active {
+  background-color: rgba(32, 84, 147, 1);
+  color: #fff;
+}
+
+.gameboard .gameboard-challenge.inactive {
+  background-color: rgba(32, 84, 147, .65);
+}
+
+.gameboard .gameboard-challenge:hover {
+  background-color: rgba(32, 84, 147, 1);
+}
+
+.gameboard .gameboard-challenge:hover {
+  border-color: #7d8da1;
+  background-color: rgba(32, 84, 147, 1);
+}
+
+.gameboard.gameboard-report .gameboard-challenge {
+  font-size: 1vw;
+}
+
+.gameboard.gameboard-report .gameboard-challenge:hover {
+  cursor: default;
+}
+
+.gameboard.gameboard-report .gameboard-category {
+  font-size: 1vw;
+}
+
+.gameboard.gameboard-report .gameboard-report-title {
+  color: #ddd;
+}
+
+.gameboard.gameboard-report .gameboard-report-points,
+.gameboard.gameboard-report .gameboard-report-meta {
+  color: #aaa;
+}
+
+
+hr {
+  border: 0.5px solid #999;
+}
+
+.enrollment-nav {
+  
+}
+
+.enrollment-nav a {
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: #999;
+}
+
+.enrollment-nav.enrollment-nav-sm a i {
+  font-size: .8rem;
+}
+
+.enrollment-nav.enrollment-nav-sm a {
+  font-size: 1rem;
+}
+
+.enrollment-nav a i {
+  font-size: 1.2rem;
+}
+
+.enrollment-nav a.active i.fa-check-circle-o {  
+  color: #41ad57 !important
+}
+
+.enrollment-nav a.active {
+  color: #fff;
+}
+
+ul.dropdown-menu {
+  background: $gray-1000;
+  color: $white;
+  font-size: .9em;
+  margin: 0;
+  padding: 4px 4px 0px 4px;
+  border-color: #101010;
+  width: 180px;
+
+  li {
+    padding: 0 0 4px 4px;
+
+    a {
+      color: $white;
+      cursor: pointer;
+    }
+  }
+}
+

@@ -1,0 +1,10 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ul class="list-inline">
+  <li *ngFor="let f of list; let i = index" tabindex="{{ i }}" (click)="onSelected(f)" class="list-inline-item text-success mr-4" [class.text-muted]="f === current">{{ f | toctitle }}</li>
+  <li tabindex="{{ list.length }}" routerLink="/survey" class="list-inline-item text-success mr-4" routerLinkActive="text-muted">Feedback</li>
+</ul>
+

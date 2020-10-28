@@ -1,0 +1,24 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div *ngIf="challenge.slug"><strong>Slug:</strong> {{ challenge.slug }}</div>
+<div *ngIf="challenge.title"><strong>Title:</strong> {{ challenge.title }}</div>
+<div *ngIf="challenge.authors"><strong>Authors:</strong> {{ challenge.authors }}</div>
+<div *ngIf="challenge.tags"><strong>Tags:</strong> {{ challenge.tags }}</div>
+<div *ngIf="challenge.document"><strong>Document:</strong> {{ challenge.document }}</div>
+<div *ngIf="challenge.difficulty"><strong>Difficulty:</strong> {{ challenge.difficulty }}</div>
+<div *ngIf="challenge.flagStyle"><strong>Flag Style:</strong> {{ challenge.flagStyle }}</div>
+<div *ngIf="challenge.isMultiStage"><strong>Multi Stage:</strong> <i class="fa fa-check"></i></div>
+<ng-container *ngIf="challenge.description">
+  <hr />
+  <strong>Description</strong>
+  <markdown [data]="challenge.description"></markdown>
+</ng-container>
+<ng-container *ngIf="challenge.text">
+  <hr />
+  <strong>Text</strong>
+  <markdown [data]="challenge.text"></markdown>
+</ng-container>
+

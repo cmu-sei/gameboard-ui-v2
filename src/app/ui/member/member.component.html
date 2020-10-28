@@ -1,0 +1,20 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div *ngIf="presence" class="row justify-content-sm-center mb-2">
+    <div class="col-4 offset-2 pt-2" [class.offline]="!presence.online">
+        <img *ngIf="presence.picture" [src]="presence.picture" width="30px"/>
+        {{presence.name}}
+        <small tooltip="Team Owner" *ngIf="showOwnerBadge"><i class="ml-2 mr-2 fa fa-shield"></i></small>
+    </div>
+    <div class="col-4">
+            <app-confirm-button *ngIf="!isLocked && (isOwner || presence.self)"
+            [name]="action()" (value)="remove($event)"
+            class="col-auto ml-auto" classlist="btn btn-link">
+            Are you sure you want to {{ presence.self ? 'leave this team' : 'remove this member' }}?
+        </app-confirm-button>
+    </div>
+</div>
+

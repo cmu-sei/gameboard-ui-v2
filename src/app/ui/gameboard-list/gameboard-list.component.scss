@@ -1,0 +1,19 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+h6 {
+  margin-bottom: 0px;
+  cursor: pointer;
+  color: #777;  
+}
+
+.list-group-item, .list-group-item-action {
+    color: #fff;
+    background-color: #444444;
+}
+
+h6:hover {
+  text-decoration: underline;
+  color: #2c753b;
+}
+

@@ -1,0 +1,28 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+.card-inner-body {
+  background: #303030;
+  padding: 1em;
+  margin-top: 1em;
+}
+
+.card-inner-body .card-inner-body {
+  background: #404040;
+  padding: .5em;
+  margin-top: .5em;
+}
+
+.flag {
+  border-left: solid 3px #000;
+}
+
+.warning-icon{
+    cursor: help;
+
+}
+
+/*.challenge-detail, .flag-detail, .workspace-detail {
+  font-family: "Courier New", Courier, monospace;
+}*/
+

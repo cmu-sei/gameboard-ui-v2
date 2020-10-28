@@ -1,0 +1,38 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+@import '../../../../scss/variables';
+
+h3 a {
+  color: $white;
+  cursor: pointer;
+}
+
+.timespan {
+  li {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0 2px;
+  }
+
+  li > span {
+    font-size: 1.3em;
+    text-transform: uppercase;
+    background: $gray-900;
+    color: $white;
+    border: solid 1px $gray-600;
+    border-top-color: $gray-400;
+    border-left-color: $gray-400;
+    display: block;
+    padding: 3px 8px;
+  }
+}
+
+.certificate-download {
+  cursor: pointer;
+
+  .text-white {
+    color: #fff;
+  }
+}
+

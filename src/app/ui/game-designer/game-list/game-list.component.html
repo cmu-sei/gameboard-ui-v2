@@ -1,0 +1,53 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ng-container>
+  <pager *ngIf="result && dataFilter" [pagedResult]="result" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+  <table class="table table-striped table-dark" *ngIf="result">    
+    <thead>
+      <tr>
+        <th scope="col">
+          <a (click)="sort('id')">
+            Id<i class="fa" [ngClass]="{ 'fa-chevron-down': dataFilter.sort == '-id', 'fa-chevron-up': dataFilter.sort == 'id'}"></i>
+          </a>
+        </th>
+        <th scope="col">
+          <a (click)="sort('name')">
+            Name<i class="fa" [ngClass]="{ 'fa-chevron-down': dataFilter.sort == '-name', 'fa-chevron-up': dataFilter.sort == 'name'}"></i>
+          </a>
+        </th>
+        <th scope="col">Boards</th>
+        <th scope="col">Gamespace Limit</th>
+        <th scope="col">Team Size</th>        
+        <th scope="col">Enrollment</th>
+        <th scope="col">Starts</th>
+        <th scope="col">Stops</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of result.results">
+        <td class="text-muted">{{ c.id }}</td>
+        <td><a tooltip="{{ c.name }}" [routerLink]="['/game-designer/', c.id]">{{ c.name.length > 40 ? (c.name | slice:0:37) + '...' : c.name }}</a></td>
+        <td>{{ c.boards.length }}</td>
+        <td>{{ c.maxConcurrentProblems }}</td>
+        <td>
+          {{ c.minTeamSize }} to {{ c.maxTeamSize ? c.maxTeamSize : 'Unlimited' }}
+        </td>
+        <td>
+          <i class="fa fa-check" *ngIf="c.isEnrollmentAllowed"></i>
+          <i class="fa fa-ban" *ngIf="!c.isEnrollmentAllowed"></i>
+          {{ c.enrollmentEndsAt | date:'M/d/yy h:mm a' }}
+        </td>
+        <td>{{ c.startTime | date:'M/d/yy h:mm a' }}</td>
+        <td>{{ c.stopTime | date:'M/d/yy h:mm a' }}</td>
+      </tr>
+      <tr *ngIf="result && result.total == 0">
+        <td class="text-center text-muted" colspan="6">No results</td>
+      </tr>
+    </tbody>
+  </table>
+  <pager *ngIf="result && dataFilter" [pagedResult]="result" [dataFilter]="dataFilter" (onPageChanged)="search()" (onPageSizeChanged)="reset()"></pager>
+</ng-container>
+

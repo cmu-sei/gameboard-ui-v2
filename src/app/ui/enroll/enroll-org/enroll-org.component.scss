@@ -1,0 +1,19 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+.org {
+  padding: 2px 20px;
+  cursor: pointer;
+}
+
+.org img {
+  height: 36px;
+  width: 36px;
+}
+
+.org.active,
+.org:hover {
+  background-color: #303030;
+  color: #fafafa;
+}
+

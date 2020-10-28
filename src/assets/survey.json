@@ -1,0 +1,110 @@
+[
+  {
+    "text": "The competition website and game engine functioned well.",
+    "type": "radio",
+    "options": [
+      {
+        "label": "1 Strongly Disagree",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      },
+      {
+        "label": "3",
+        "value": "3"
+      },
+      {
+        "label": "4",
+        "value": "4"
+      },
+      {
+        "label": "5 Strongly Agree",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "text": "The challenges were engaging and appropriate.",
+    "type": "radio",
+    "options": [
+      {
+        "label": "1 Strongly Disagree",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      },
+      {
+        "label": "3",
+        "value": "3"
+      },
+      {
+        "label": "4",
+        "value": "4"
+      },
+      {
+        "label": "5 Strongly Agree",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "text": "The time limit helped balance my work and personal time commitments.",
+    "type": "radio",
+    "options": [
+      {
+        "label": "1 Strongly Disagree",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      },
+      {
+        "label": "3",
+        "value": "3"
+      },
+      {
+        "label": "4",
+        "value": "4"
+      },
+      {
+        "label": "5 Strongly Agree",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "text": "Please rate your familiarity with the material.",
+    "type": "radio",
+    "options": [
+      {
+        "label": "1 No Familiarity",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      },
+      {
+        "label": "3",
+        "value": "3"
+      },
+      {
+        "label": "4",
+        "value": "4"
+      },
+      {
+        "label": "5 Intimately Familiar",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "text": "Please provide feedback on how we can improve the competition in the future.",
+    "type": "textarea"
+  }
+]

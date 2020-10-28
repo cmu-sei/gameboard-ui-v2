@@ -1,0 +1,93 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+@import '../../../scss/variables';
+
+*, *:before, *:after { box-sizing: border-box; }
+
+.board {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: #205493;
+
+  .board-column {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .tile {
+    flex: 1;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ddd;
+    border: .5px solid $gray-600;
+    // background: linear-gradient(to top left, rgb(0,0,136,.2), rgb(0,44,0,.6));
+    background-color: #205493;
+  }
+
+  .tile-header {
+    font-size: 1.5vw;
+    // color: $orange;
+    cursor: default;
+  }
+
+  .tile-cell {
+    // font-family: Impact, Charcoal, sans-serif;
+    font-size: 3.5vw;
+  }
+
+  .pending {
+    color: $white;
+  }
+  .working {
+    color: $gray-600;
+  }
+  .complete {
+    color: $gray-900;
+  }
+  .success {
+    color: $green;
+  }
+  .failure {
+    color: $danger;
+  }
+
+  .tile:hover {
+    cursor: pointer;
+  }
+
+  .tile.active {
+    border-width: 0;
+    font-size: 4vw;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 5;
+  }
+
+  .column-container {
+    width: 100%;
+  }
+}
+
+h2 {margin-top: 10%; margin-left: 38%;}
+
+.badge {
+  font-size: 12pt;
+  font-weight: normal;
+}
+

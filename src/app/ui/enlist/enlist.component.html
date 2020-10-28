@@ -1,0 +1,28 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div *ngIf="team" class="card">
+    <div class="card-header text-uppercase">Joining a Team</div>
+    <div class="card-body text-center">
+      <h3><img [src]="organization.logo" height="64px" />{{organization.title}}</h3>
+      <hr />
+      <p class="p-3">
+        The team you are joining is associated with <strong>{{team.organizationName}}</strong>.
+        Please confirm that you are a member of that organization.
+      </p>
+      <p *ngIf="enrollmentMessage">
+        <markdown>{{ enrollmentMessage }}</markdown>
+      </p>
+      <hr />
+      <p class="p-3">
+        By clicking <strong>Confirm</strong>,
+        I acknowledge the
+        <a [routerLink]="['/doc', 'Rules']">Competition Rules</a>
+        and agree to abide by them during the entire event.
+      </p>
+      <button class="btn btn-success btn-lg" (click)="confirm()">Confirm</button>
+    </div>
+</div>
+

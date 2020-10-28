@@ -1,0 +1,62 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+
+<div *ngIf="current" class="header">
+  <img [src]="sidebar.logo.url" alt="{{sidebar.logo.alt}}" height="128px" class="p-2">
+
+  <button class="btn btn-dark mr-2" (click)="current=null">
+    <i class="fa fa-chevron-circle-left"></i> Back
+  </button>
+
+  <div class="card p-2 m-4">
+    <p>
+      <span>{{current.teamName | ellipsis:32 }}</span><br />
+      <small><span>{{current.teamOrganizationName}}</span>-Team-<span>{{current.teamNumber}}</span></small>
+    </p>
+    <p>
+      <span>{{current.challengeTitle | ellipsis:32 }}</span><br />
+      <small>{{current.challengeSlug}}</small>
+    </p>
+  </div>
+</div>
+
+<div *ngIf="current" class="row">
+  <div *ngFor="let c of consoles; index as i" class="console">
+    <div><span class="badge badge-dark font-weight-light p-2">{{ c.vmName }}</span></div>
+    <app-console [id]="c.vmId" [pid]="c.problemId" [index]=i viewOnly="true"></app-console>
+  </div>
+</div>
+
+<div *ngIf="!current">
+  <div class="header">
+
+    <img [src]="sidebar.logo.url" alt="{{sidebar.logo.alt}}" height="128px" class="p-2">
+
+    <button class="btn btn-dark mr-2" (click)="refresh()">
+      <i class="fa fa-th"></i> Refresh
+    </button>
+
+    <span *ngIf="!gamespaces || !gamespaces.length" class="p-2">
+      No gamespaces avaliable
+    </span>
+
+  </div>
+
+  <div class="row">
+    <div *ngFor="let g of gamespaces" (click)="connectGamespace(g)" class="card p-2 m-4">
+      <p>
+        <span>{{g.teamName | ellipsis:32 }}</span><br />
+        <small><span>{{g.teamOrganizationName}}</span>-Team-<span>{{g.teamNumber}}</span></small>
+      </p>
+      <p>
+        <span>{{g.challengeTitle | ellipsis:32 }}</span><br />
+        <small>{{g.challengeSlug}}</small>
+      </p>
+    </div>
+  </div>
+
+</div>
+

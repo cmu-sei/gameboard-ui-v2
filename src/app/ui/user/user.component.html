@@ -1,0 +1,82 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<button *ngIf="!profile" class="btn btn-lg btn-block btn-success-alt mb-2" (click)="login()">Sign In</button>
+<div class="card" *ngIf="!!profile">
+  <div class="card-header text-uppercase">
+    Status&nbsp;
+    <small><i class="fa fa-circle text-warning" *ngIf="isTestMode" tooltip="Test Mode Enabled"></i></small>
+    <small><i *ngIf="!isAllowed" class="fa fa-clock-o" tooltip="Enrollment Period has Ended"></i></small>    
+    <button *ngIf="!!profile" class="btn btn-sm btn-dark btn-sm pull-right" (click)="logout()">Sign Out</button>
+  </div>  
+  <div class="card-body">
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar">
+      <ng-container *ngIf="!!profile">
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Player Management" *ngIf="isModerator || isObserver">
+          <button type="button" class="btn btn-secondary" routerLink="/teams" [routerLinkActive]="['btn-success']" tooltip="Teams"><i class="fa fa-fw fa-group"></i></button>
+          <button type="button" class="btn btn-secondary" routerLink="/users" [routerLinkActive]="['btn-success']" tooltip="Users"><i class="fa fa-fw fa-user"></i></button>
+          <a class="btn btn-secondary" target="_blank" routerLink="/observe" [routerLinkActive]="['btn-success']" tooltip="Observe"><i class="fa fa-fw fa-tv"></i></a>
+        </div>
+        <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Game Management" *ngIf="isGameDesigner || isChallengeDeveloper">
+          <button *ngIf="isGameDesigner" type="button" class="btn btn-secondary" routerLink="/game-designer" [routerLinkActive]="['btn-success']" tooltip="Game&nbsp;Designer"><i class="fa fa-fw fa-gamepad"></i></button>
+          <button *ngIf="isChallengeDeveloper" type="button" class="btn btn-secondary" routerLink="/challenge-developer" [routerLinkActive]="['btn-success']" tooltip="Challenge&nbsp;Developer"><i class="fa fa-fw fa-flag-checkered"></i></button>
+        </div>
+      </ng-container>
+      <div class="btn-group btn-group-sm" dropdown tooltip="Reports">
+        <button id="report-items" dropdownToggle type="button" class="btn btn-secondary dropdown-toggle" aria-controls="reports">
+          <i class="fa fa-fw fa-bar-chart"></i> <span class="caret"></span>
+        </button>
+        <ul id="reports" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="report-items">
+          <li role="menuitem">
+            <a routerLink="/reports/participation-report">Participation Report</a>
+          </li>
+          <li role="menuitem" *ngIf="!!profile">
+            <a routerLink="/reports/tag-report">Tag Report</a>
+          </li>
+          <li role="menuitem" *ngIf="isModerator || isObserver">
+            <a routerLink="/reports/completion-report">Completion Report</a>
+          </li>
+          <li role="menuitem" *ngIf="isModerator">
+            <a routerLink="/reports/game-survey-report">Game Survey Report</a>
+          </li>
+          <li role="menuitem" *ngIf="isModerator">
+            <a routerLink="/reports/challenge-survey-report">Challenge Survey Report</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <ng-container *ngIf="!!profile && profile.user && !locked && isAllowed">
+      <hr />
+      <strong>Enrollment Checklist</strong>
+      <ul class="list-unstyled enrollment-nav enrollment-nav-sm pl-4">
+        <li *ngFor="let item of checklist" [class.text-muted]="!item.needs">
+          <a routerLink="{{item.path}}" routerLinkActive="active">
+            <i class="fa" [ngClass]="{'fa-circle-o': item.needs, 'fa-check-circle-o': !item.needs}"></i>&nbsp;
+            {{item.text}}
+          </a>
+        </li>
+      </ul>
+      <hr />
+    </ng-container>    
+    <ng-container *ngIf="!!profile && profile.team">      
+      <div class="row">
+        <div class="col-lg-6">
+          <i class="fa fa-lock text-muted" *ngIf="locked" tooltip="Enrollment is Locked"></i>
+          <a [routerLink]="['/team', profile.team.id]">
+            {{ profile.team.name }}
+          </a>
+          <div class="text-muted pb-2">{{ profile.team.anonymizedName }}</div>
+        </div>
+        <div class="col-lg-6">
+          <div class="pull-right">
+            <badge *ngFor="let badge of profile.team.badges" [badge]="badge"></badge>
+          </div>          
+        </div>
+      </div>
+      <app-team-presence></app-team-presence>
+    </ng-container>
+  </div>
+</div>
+

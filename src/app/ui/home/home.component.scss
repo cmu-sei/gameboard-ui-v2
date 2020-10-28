@@ -1,0 +1,36 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+
+@import '../../../scss/variables';
+
+
+.jumbotron {
+    padding: 1rem;
+    margin: 2rem;
+}
+
+.sidebar {
+    padding: 4px 28px;
+    background-color: $gray-900;
+    min-height: 100vh;
+}
+.vh-100 {
+    height: 100%;
+}
+.logo {
+    margin-bottom: 32px;
+}
+// img {
+//     margin: 2rem 1rem;
+//     max-width: 240px;
+// }
+.info-box {
+    align-items: center;
+    display: inline-flex;
+}
+
+.signalr {
+    background-color: $danger;
+}
+

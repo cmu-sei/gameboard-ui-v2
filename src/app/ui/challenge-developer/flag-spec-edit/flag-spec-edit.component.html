@@ -1,0 +1,175 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div class="row">  
+  <div class="col-lg-3">
+    <div class="form-group">
+      <select name="type" class="form-control" [(ngModel)]="flag.type">
+        <option value="Match">Match</option>
+        <option value="MatchAll">Match All</option>
+        <option value="MatchAny">Match Any</option>
+        <option value="MatchOutput">Match Output</option>
+        <option value="MatchAlphaNumeric">Match AlphaNumeric</option>
+      </select>
+      <small class="form-text text-muted">the matching pattern to use for this token</small>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="form-group">
+      <input name="value" [(ngModel)]="flag.value" type="text" class="form-control" placeholder="Value">
+      <small class="form-text text-muted">value</small>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="form-group">
+      <input name="iso" [(ngModel)]="flag.iso" type="text" class="form-control" placeholder="ISO">
+      <small class="form-text text-muted">ISO instruction</small>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="form-check">
+      <input name="isoRestricted" type="checkbox" class="form-check-input" id="isoRestricted" [(ngModel)]="flag.isoRestricted">
+      <label class="form-check-label" for="isoRestricted">ISO Restricted</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="form-group">
+      <textarea name="text" [(ngModel)]="flag.text" class="form-control form-control-sm" placeholder="Text" rows="20"></textarea>
+      <small class="form-text text-muted">text to append to challenge text for this flag</small>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <markdown [data]="flag.text"></markdown>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-12">
+    <div style="background: #444; padding: 1em; margin: .5em 0;">
+      <div class="row">        
+        <div class="col-lg-3 offset-lg-2">Tokens</div>
+        <div class="col-lg-2">
+          <span [ngClass]="{'text-success': totalPercent == 100, 'text-danger': totalPercent > 100, 'text-warning': totalPercent < 100 }">{{ totalPercent }}%</span>
+        </div>
+        <div class="col-lg-3">Label</div>
+        <div class="col-lg-2">
+          <button type="button" class="btn btn-secondary btn-sm pull-right" (click)="addToken()"><i class="fa fa-plus"></i></button>
+        </div>
+      </div>
+      <div class="row" style="margin-top: .5em;" *ngFor="let token of flag.tokens; let in=index;trackBy:trackByFn">        
+        <div class="col-lg-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Token Move">
+            <button [disabled]="in == 0" type="button" class="btn btn-secondary" (click)="onMoveToken(in, -1)"><i class="fa fa-fw fa-chevron-up"></i></button>
+            <button [disabled]="flag.tokens.length - 1 == in" type="button" class="btn btn-secondary" (click)="onMoveToken(in, 1)"><i class="fa fa-fw fa-chevron-down"></i></button>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <input [(ngModel)]="flag.tokens[in].value" type="text" class="form-control form-control-sm" placeholder="Value">
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input [(ngModel)]="flag.tokens[in].percent" (change)="updatePercent()" type="number" class="form-control form-control-sm" maxlength="3" placeholder="Percent">
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <input [(ngModel)]="flag.tokens[in].label" type="text" class="form-control form-control-sm" maxlength="500" placeholder="Label">
+          </div>
+        </div>
+        <div class="col-lg-1">
+          <span *ngIf="isMultiStage" tooltip="Stage {{ in + 1 }}">
+            <span class="badge badge-light mr-1">{{ in + 1 }}</span>
+            <i class="fa fa-level-down"></i>
+          </span>
+        </div>
+        <div class="col-lg-1">
+          <button type="button" class="btn btn-secondary btn-sm pull-right" (click)="removeToken(in)"><i class="fa fa-minus"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<strong>Generation</strong>
+<div class="row">
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="generateOutputText" [(ngModel)]="flag.generateOutputText" type="text" class="form-control" placeholder="Generate Output Text">
+      <small class="form-text text-muted">generate output text</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="generateOutputFlag" [(ngModel)]="flag.generateOutputFlag" type="text" class="form-control" placeholder="Generate Output Flag">
+      <small class="form-text text-muted">generate output flag</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="generateOutputFileList" [(ngModel)]="flag.generateOutputFileList" type="text" class="form-control" placeholder="Generate Output File List">
+      <small class="form-text text-muted">generate output file list</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="generateCommand" [(ngModel)]="flag.generateCommand" type="text" class="form-control" placeholder="Generate Command">
+      <small class="form-text text-muted">generate command</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="generateImage" [(ngModel)]="flag.generateImage" type="text" class="form-control" placeholder="Generate Image">
+      <small class="form-text text-muted">generate image</small>
+    </div>
+  </div>
+</div>
+<strong>Grading</strong>
+<div class="row">
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeInputFlag" [(ngModel)]="flag.gradeInputFlag" type="text" class="form-control" placeholder="Grade Input Flag">
+      <small class="form-text text-muted">grade input flag</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeInputData" [(ngModel)]="flag.gradeInputData" type="text" class="form-control" placeholder="Grade Input Data">
+      <small class="form-text text-muted">grade input data</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeInputFile" [(ngModel)]="flag.gradeInputFile" type="text" class="form-control" placeholder="Grade Input File">
+      <small class="form-text text-muted">grade input data</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeOutputFile" [(ngModel)]="flag.gradeOutputFile" type="text" class="form-control" placeholder="Grade Output File">
+      <small class="form-text text-muted">grade output file</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeCommand" [(ngModel)]="flag.gradeCommand" type="text" class="form-control" placeholder="Grade Command">
+      <small class="form-text text-muted">grade command</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeImage" [(ngModel)]="flag.gradeImage" type="text" class="form-control" placeholder="Grade Image">
+      <small class="form-text text-muted">grade image</small>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-group">
+      <input name="gradeCommandTimeout" [(ngModel)]="flag.gradeCommandTimeout" type="text" class="form-control" placeholder="Grade Command Timeout">
+      <small class="form-text text-muted">grade command timeout</small>
+    </div>
+  </div>
+</div>
+

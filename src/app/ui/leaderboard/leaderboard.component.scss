@@ -1,0 +1,45 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+.place-badge{
+    position: absolute;
+    top: 18px;
+    left: 31px;
+    width: 2rem;
+    height:2rem;
+    line-height: 2rem;
+    font-size: 1rem;
+    border-radius: 50%;
+    color:white;
+    border:1px solid grey;
+}
+
+.leaderboard-card {
+    width: 10rem;
+}
+
+.first {
+    background: #C9B037;
+}
+
+.second {
+    background: #B4B4B4;
+}
+
+.third {
+    background: #AD8A56;
+}
+
+ul {
+    font-size: .85rem;
+}
+
+.tooltip-btn:hover {
+    cursor: pointer;
+}
+
+.organization-logo
+{
+  max-height: 32px;
+}
+

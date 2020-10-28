@@ -1,0 +1,38 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ng-container *ngIf="team">
+  <h3>{{ team.name }}</h3>
+  <div>&nbsp;</div>
+  <tabset class="bg-dark">
+    <tab heading="Event Horizon">
+      <div>&nbsp;</div>
+      <ng-container *ngIf="boardEvents">
+        <div *ngFor="let be of boardEvents" class="card">
+          <div class="card-header">
+            <strong>{{be.board ? be.board.name : '-'}} <span class="ml-1 badge badge-pill btn-success-alt">{{be.score}}</span></strong>
+          </div>
+          <div class="card-body">
+            <table class="table table-borderless">
+              <colgroup>
+                <col style="width: 20%" />
+                <col style="width: 5%" />
+                <col style="width: 25%" />
+                <col style="width: 50%" />
+              </colgroup>
+              <tr *ngFor="let ce of be.challenges">
+                <td>{{ce.name.length > 15 ? (ce.name | slice:0:15) + '...' : ce.name }}</td>
+                <td>{{ce.points}}</td>
+                <td>{{ce.title}}</td>
+                <td style="background: #000;"><app-event-horizon [events]="ce.events"></app-event-horizon></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </tab>
+  </tabset>
+</ng-container>
+

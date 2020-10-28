@@ -1,0 +1,28 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<svg viewBox="0 0 100 6" fill="orange" *ngIf="events">
+  <g>
+    <svg:line x1=0 y1=3 x2=100 y2=3 stroke="#222"></svg:line>
+
+    <ng-container *ngFor="let e of events">
+      <a class="event-container">
+        <polygon *ngIf="e.type === 'Default'" class="event start" [attr.points]="e.index + ', 1 ' + (e.index + 4) + ',3 ' + e.index + ', 5'">
+          <title>{{ e.timestamp | date:'M/d/yyyy h:mma'}}</title>
+        </polygon>
+        <circle *ngIf="e.type === 'Failure'" [attr.cx]="e.index" cy="3" [attr.r]="1.6" class="event failure">
+          <title>{{ e.timestamp | date:'M/d/yyyy h:mma'}}</title>
+        </circle>
+        <rect *ngIf="e.type === 'Partial'" [attr.x]="e.index" y=1.5 width=3 height=3 class="event partial">
+          <title>{{ e.timestamp | date:'M/d/yyyy h:mma'}}</title>
+        </rect>
+        <rect *ngIf="e.type === 'Success'" [attr.x]="e.index" y=1 width=4 height=4 class="event success">
+          <title>{{ e.timestamp | date:'M/d/yyyy h:mma'}}</title>
+        </rect>
+      </a>
+    </ng-container>
+  </g>
+</svg>
+

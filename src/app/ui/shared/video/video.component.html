@@ -1,0 +1,17 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ng-container *ngIf="videoUrl">
+    <div class="embed-responsive embed-responsive-16by9">
+        <video #videoEl controls class="embed-responsive-item">
+            <source [src]="videoUrl">
+        </video>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="!videoUrl">
+    <p>No url provided.</p>
+</ng-container>
+

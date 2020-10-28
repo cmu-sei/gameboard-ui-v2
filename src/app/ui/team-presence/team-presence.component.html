@@ -1,0 +1,19 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div *ngIf="members" class="list-unstyled mt-1">
+  <div *ngFor="let member of sortByName(); trackBy: trackPresenceId" class="clearfix pb-2" [class.text-muted]="!member.online">
+    <i *ngIf="!member.online" class="fa fa-circle-o pr-1" tooltip="Offline"></i>
+    <i *ngIf="member.online" class="fa fa-circle text-success pr-1" tooltip="Online"></i>
+    <i class="fa fa-user-circle-o pr-1" tooltip="Member" *ngIf="team.ownerUserId != member.id"></i>
+    <i class="fa fa-user-circle pr-1" tooltip="Leader" *ngIf="team.ownerUserId == member.id"></i>
+    {{member.name}}
+    <img *ngIf="showLogo && member.picture" [src]="member.picture" height="32px" alt="logo" />
+    <a *ngIf="canKick(member)" (click)="kick(member)" class="pull-right" tooltip="Remove Member">
+      <i class="fa fa-close"></i>
+    </a>
+  </div>
+</div>
+

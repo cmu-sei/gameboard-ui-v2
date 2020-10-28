@@ -1,0 +1,25 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div class="row mt-2 mb-2" *ngIf="pagedResult && dataFilter">
+  <div class="col-6">
+    <span class="" tooltip="Total Records">{{ pagedResult.total }} {{ pagedResult.total == 1 ? 'Result' : 'Results' }}</span>
+  </div>
+  <div class="col-2">
+    <select class="form-control" tooltip="Records To Show" [(ngModel)]="dataFilter.take" name="take" (change)="pageSizeChanged()">
+      <option *ngFor="let t of takes" [value]="t.value">{{ t.label }}</option>
+    </select>
+  </div>
+  <div class="col-4 text-right">
+    <div class="btn-group" role="group" aria-label="Pager">
+      <button class="btn btn-secondary" (click)="pageChanged('start')" [disabled]="!state.start" tooltip="First Page"><i class="fa fa-fast-backward"></i></button>
+      <button class="btn btn-secondary" (click)="pageChanged('previous')" [disabled]="!state.previous" tooltip="Previous Page"><i class="fa fa-backward"></i></button>
+      <button class="btn btn-secondary" [disabled]="true" tooltip="Current Page">{{ pageText }}</button>
+      <button class="btn btn-secondary" (click)="pageChanged('next')" [disabled]="!state.next" tooltip="Next Page"><i class="fa fa-forward"></i></button>
+      <button class="btn btn-secondary" (click)="pageChanged('end')" [disabled]="!state.end" tooltip="Last page"><i class="fa fa-fast-forward"></i></button>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,27 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div class="card" *ngIf="boards">
+    <div class="card-header text-uppercase">Competition</div>
+    <div class="card-body">
+      <div *ngFor="let b of boards" class="row mb-3">
+        <div class="col-lg-7">
+          <h6 *ngIf="!!b.state.open" attr.aria-label="{{ b.name }}" [routerLink]="['/board', b.id]" [routerLinkActive]="['text-success']" class="text-uppercase">{{b.name}}</h6>
+          <h6 *ngIf="!b.state.open" (click)="showClosedMessage(b)" attr.aria-label="{{ b.name }}" class="text-uppercase">{{b.name}}</h6>
+          <small *ngIf="b.state.expired" class="text-muted">(closed)</small>
+          <small *ngIf="b.state.timespan" class="text-muted">
+            <span *ngIf="!b.state.open">opens in </span>
+            <span *ngIf="b.state.open && !b.state.expired">closes in </span>
+            <span>{{b.state.timespan | timespan:'analog'}}</span>
+          </small>
+        </div>
+        <div class="col-lg-5 text-right">
+          <span class="badge badge-pill badge-success-alt mx-2 px-2 py-1 font-weight-normal">{{b.score}}</span>
+          <button tooltip="View&nbsp;Leaderboard" class="btn btn-secondary btn-sm" [routerLink]="['/board', b.id, 'scores']" [routerLinkActive]="['btn-success']"><i class="fa fa-fw fa-list-ol"></i></button>
+        </div>
+      </div>      
+    </div>
+</div>
+

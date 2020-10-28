@@ -1,0 +1,50 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ng-container *ngIf="!isLocked && isAllowed">
+  <div class="row text-center enrollment-nav">
+    <div class="col">
+      <a routerLink="organization" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasOrganization, 'fa-check-circle-o': hasOrganization }"></i>
+        Organization
+      </a>
+    </div>
+    <div class="col">
+      <a routerLink="enrollment" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasEnrollment, 'fa-check-circle-o': hasEnrollment }"></i>
+        Enrollment
+      </a>
+    </div>
+    <div class="col" *ngIf="multiplayer">
+      <a routerLink="teammates" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasMembers, 'fa-check-circle-o': hasMembers }"></i>
+        Teammates
+      </a>
+    </div>
+    <div class="col">
+      <a routerLink="confirm" routerLinkActive="active">
+        <i class="fa" [ngClass]="{'fa-circle-o': !hasComplete, 'fa-check-circle-o': hasComplete }"></i>
+        Confirm
+      </a>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col panel ml-auto mr-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="isLocked" class="card">
+  <div class="card-body">
+    <h4>Your enrollment is locked.</h4>
+  </div>
+</div>
+<div *ngIf="!isAllowed" class="card">
+  <div class="card-body">
+    <h4>The enrollment period has ended.</h4>
+  </div>
+</div>
+

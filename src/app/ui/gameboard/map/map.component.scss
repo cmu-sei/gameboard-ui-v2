@@ -1,0 +1,82 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+@import '../../../../scss/variables';
+
+.modal {
+  position: absolute;
+}
+
+.coordinate {
+  fill: $yellow;
+  opacity: .6;
+}
+
+.coordinate-container {
+  position: relative;
+}
+
+.coordinate-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, .8);
+  color: #fff;
+  height: 200px;
+  width: 400px;
+  padding: 10px 15px;
+  display: none;
+  border-radius: 10px;
+  border: solid 3px $gray-700;
+}
+
+.coordinate-tooltip.disabled {
+  color: #aaa;
+}
+
+.coordinate-container:hover .coordinate-tooltip {
+  visibility: visible;
+}
+
+.coordinate:hover {
+  cursor: pointer;
+  opacity: .5;
+}
+
+.points {
+  font-size: 10%;
+  fill: $white;
+}
+
+.coordinate-border {
+  fill: transparent;
+}
+
+.pending,
+.ready {
+  fill: $white;
+}
+
+.error {
+  /*stroke: $red;*/
+}
+
+.working {
+  fill: $gray-600;
+}
+
+.complete {
+  fill: $gray-900;
+}
+
+.success {
+  fill: $green;
+}
+
+.failure {
+  fill: $danger;
+}
+
+.badge {
+  font-size: 10pt;
+  font-weight: normal;
+}
+

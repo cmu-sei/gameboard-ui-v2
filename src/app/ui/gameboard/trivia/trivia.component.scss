@@ -1,0 +1,86 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+@import '../../../../scss/variables';
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.col {
+  padding-left: 0;
+  padding-right: 5px;
+}
+
+.col:last-child {
+  padding-right: 0;
+}
+
+.category {
+  height: 100px;
+  padding: 20px 10px;
+  margin-bottom: 5px;
+}
+
+.question {
+  height: 150px;
+  padding: 35px 10px;
+  margin-bottom: 5px;
+  font-size: 3vw;
+  font-weight: 800;
+  text-shadow: 2px 2px 3px #000;
+  cursor: pointer;
+  color: $yellow;
+
+  .title {
+    font-size: 10pt;
+  }
+}
+
+.question.with-title {  
+  padding-top: 20px;
+}
+
+.category {
+  font-size: 1.2vw;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-shadow: 2px 2px 3px #222;
+  color: $white;
+}
+
+.question.pending,
+.question.ready {
+  color: $white;
+}
+
+.question.working {
+  color: $gray-600;
+}
+
+.question.complete {
+  color: $gray-900;
+}
+
+.question.success {
+  color: $green;
+}
+
+.question.failure {
+  color: $danger;
+}
+
+.question.disabled {
+  color: $gray-500;
+}
+
+.trivia .col > .category,
+.trivia .col > .question {
+  width: 100%;
+  justify-content: center;  
+  text-align: center;  
+  border: .5px solid $gray-600;
+  background-color: #205493;
+}
+

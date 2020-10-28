@@ -1,0 +1,636 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<form *ngIf="game">
+  <div class="card">
+    <div class="card-header text-uppercase clearfix">
+      <div class="row">
+        <div class="col-lg-6">
+          Game: {{ game.name }} ({{ game.id }})
+        </div>
+        <div class="col-lg-3 text-right">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Game Actions">
+            <button type="button" class="btn btn-info" (click)="onEditGame()" tooltip="Edit Game"><i class="fa fa-fw fa-pencil"></i></button>            
+          </div>
+        </div>
+        <div class="col-lg-3 text-right">
+          <small *ngIf="isDirty" class="text-warning mr-1">changes pending...</small>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Game Actions">
+            <button type="button" class="btn btn-success" tooltip="Save Game" (click)="onSave()"><i class="fa fa-fw fa-save"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-lg-6"><strong>Team Size:</strong> {{ game.minTeamSize }} to {{ game.maxTeamSize ? game.maxTeamSize : 'Unlimited' }}</div>
+        <div class="col-lg-6" *ngIf="game.maxConcurrentProblems"><strong>Gamespace Limit:</strong> {{ game.maxConcurrentProblems }}</div>
+        <div class="col-lg-6" *ngIf="game.enrollmentEndsAt"><strong>Enrollment Ends:</strong> {{ game.enrollmentEndsAt | date:'M/d/yyyy' }}</div>
+        <div class="col-lg-6" *ngIf="game.startTime"><strong>Start Time:</strong> {{ game.startTime | date:'M/d/yyyy h:mma' }}</div>
+        <div class="col-lg-6" *ngIf="game.stopTime"><strong>Stop Time:</strong> {{ game.stopTime | date:'M/d/yyyy h:mma' }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header text-uppercase">
+      <div class="row">
+        <div class="col-lg-6">
+          Boards
+        </div>        
+        <div class="col-lg-6 text-right">
+          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="Board Actions">
+            <button type="button" class="btn btn-info" (click)="onAddBoard()" tooltip="Add Board"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner-body flag" *ngFor="let board of game.boards; let bi=index;">
+        <div class="row">
+          <div class="col-lg-3">
+            <strong class="text-uppercase">{{ board.name }}</strong>
+          </div>
+          <div class="col-lg-2">
+            <i class="fa fa-map mr-2" *ngIf="board.boardType == 'Map'" tooltip="Map"></i>
+            <i class="fa fa-table mr-2" *ngIf="board.boardType == 'Trivia'" tooltip="Trivia"></i>
+            <i class="fa fa-refresh mr-2" *ngIf="board.isResetAllowed" tooltip="Reset Allowed"></i>
+            <i class="fa fa-info-circle mr-2" *ngIf="board.isTitleVisible" tooltip="Titles Visible"></i>
+            <i class="fa fa-eye mr-2" *ngIf="board.isPreviewAllowed" tooltip="Preview Allowed"></i>
+            <i class="fa fa-eye-slash mr-2" *ngIf="!board.isPreviewAllowed" tooltip="Preview Not Allowed"></i>
+            <i class="fa fa-exclamation-triangle mr-2" *ngIf="board.isPractice" tooltip="Practice"></i>
+          </div>
+          <div class="col-lg-4">
+            <ng-container *ngIf="board.startTime">
+              {{ board.startTime | date:'M/d/yyyy h:mma' }}
+            </ng-container>
+            <ng-container *ngIf="board.stopTime">
+              <span *ngIf="!board.startTime">Ends&nbsp;</span>
+              <span *ngIf="!!board.startTime">&nbsp;to&nbsp;</span>
+              {{ board.stopTime | date:'M/d/yyyy h:mma' }}
+            </ng-container>
+          </div>          
+          <div class="col-lg-3 text-right">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Board Actions">
+              <button [disabled]="bi == 0" type="button" class="btn btn-secondary" tooltip="Move Up" (click)="moveBoard(bi, -1)"><i class="fa fa-fw fa-chevron-up"></i></button>
+              <button [disabled]="game.boards.length - 1 == bi" type="button" tooltip="Move Down" class="btn btn-secondary" (click)="moveBoard(bi, 1)"><i class="fa fa-fw fa-chevron-down"></i></button>
+              <button *ngIf="board.boardType == 'Trivia'" type="button" class="btn btn-info btn-sm ml-2" (click)="onAddCategory(board)" tooltip="Add Category"><i class="fa fa-plus"></i></button>
+              <button *ngIf="board.boardType == 'Map'" type="button" class="btn btn-info btn-sm ml-2" (click)="onAddMap(board)" tooltip="Add Map"><i class="fa fa-plus"></i></button>
+              <button type="button" class="btn btn-info" (click)="onEditBoard(board, bi)" tooltip="Edit Board"><i class="fa fa-fw fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger" (click)="onRemoveBoard(bi)" tooltip="Remove Board"><i class="fa fa-fw fa-trash-o"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card-inner-body">
+          <ng-container *ngIf="board.boardType == 'Trivia'">
+            <div class="row">
+              <div class="col">
+                &nbsp;
+              </div>
+              <div *ngFor="let category of board.categories; let ci=index;" class="col">
+                <div class="row mb-2">
+                  <div class="col-lg-4 text-left">
+                    <button type="button" class="btn btn-sm" [disabled]="ci === 0" (click)="moveCategory(board, ci, -1)" tooltip="Move Left">
+                      <i class="fa fa-chevron-left"></i>
+                    </button>
+                  </div>
+                  <div class="col-lg-4 text-center">
+                    <button type="button" class="btn btn-danger btn-sm" (click)="onRemoveCategory(bi, ci)" tooltip="Remove Category">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </div>
+                  <div class="col-lg-4 text-right">
+                    <button type="button" class="btn btn-sm" [disabled]="ci === (board.categories.length - 1)" (click)="moveCategory(board, ci, 1)" tooltip="Move Right">
+                      <i class="fa fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="category-container" (click)="onEditCategory(category, bi, ci)">
+                  <div class="category">
+                    <small>{{ category.name }}</small>
+                  </div>
+                  <div *ngFor="let question of category.questions; let qi=index;" class="question">
+                    <div class="text-center">
+                      <span [ngClass]="{ 'text-warning': question.points <= 0 }">
+                        {{ question.points }}
+                      </span>
+                    </div>
+                    <div *ngIf="question.challengeLink">
+                      <small>{{ question.challengeLink.slug }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                &nbsp;
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="board.boardType == 'Map'">
+            <div *ngFor="let map of board.maps; let mi = index;" class="mb-2 ml-2">
+              <div class="row">
+                <div class="col-lg-2">
+                  <div>{{ map.name }}</div>
+                  <small class="text-hint">({{ map.id }})</small>
+                </div>
+                <div class="col-lg-2 text-right">
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Map Move">
+                    <button [disabled]="mi == 0" type="button" class="btn btn-secondary" tooltip="Move Up" (click)="moveMap(board, mi, -1)"><i class="fa fa-fw fa-chevron-up"></i></button>
+                    <button [disabled]="board.maps.length - 1 == mi" type="button" class="btn btn-secondary" tooltip="Move Down" (click)="moveMap(board, mi, 1)"><i class="fa fa-fw fa-chevron-down"></i></button>
+                  </div>
+                </div>
+                <div class="col-lg-1">
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Map Actions">
+                    <button type="button" class="btn btn-info" (click)="onEditMap(map, bi, mi)" tooltip="Edit Map"><i class="fa fa-fw fa-pencil"></i></button>
+                    <button type="button" class="btn btn-danger" (click)="onRemoveMap(bi, mi)" tooltip="Remove Map"><i class="fa fa-trash-o"></i></button>
+                  </div>
+                </div>
+                <div class="col-lg-7">
+                  <app-map [board]="board" [map]="map" [isTooltipVisible]="false" (selected)="onEditCoordinate($event, bi, mi)" (click)="onAddCoordinate($event, bi, mi)"></app-map>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div bsModal #gameModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editGame">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Game</h4>
+        <i class="fa fa-times fa-pull-right" (click)="gameModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-2">
+            <div class="form-group">
+              <input name="id" [(ngModel)]="editGame.id" type="text" class="form-control form-control-sm" id="id" placeholder="ID">
+              <small class="form-text text-muted">unique id for this game</small>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group">
+              <input name="name" [(ngModel)]="editGame.name" type="text" class="form-control form-control-sm" id="name" placeholder="Name">
+              <small class="form-text text-muted">name of this game</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="minTeamSize" min="0" max="5" [(ngModel)]="editGame.minTeamSize" type="number" class="form-control form-control-sm" id="minTeamSize" placeholder="Min Team Size">
+              <small class="form-text text-muted">minimum team size</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="maxTeamSize" min="0" max="500" [(ngModel)]="editGame.maxTeamSize" type="number" class="form-control form-control-sm" id="maxTeamSize" placeholder="Max Team Size">
+              <small class="form-text text-muted">maximum team size</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="maxConcurrentProblems" min="0" max="50" [(ngModel)]="editGame.maxConcurrentProblems" type="number" class="form-control form-control-sm" id="maxConcurrentProblems" placeholder="Max Concurrent Gamespaces">
+              <small class="form-text text-muted">maximum concurrent gamespaces</small>
+            </div>
+          </div>          
+        </div>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input bsDatepicker type="text" container="gameModal" class="form-control" #dp="bsDatepicker" [(ngModel)]="enrollmentEndsAtDate">
+              <small class="form-text text-muted">the date enrollment ends</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input type="text" class="form-control" maxlength="8" [(ngModel)]="enrollmentEndsAtTime" placeholder="12:00AM">
+              <small class="form-text text-muted">the time the enrollment ends (12:00AM)</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input bsDatepicker type="text" container="gameModal" class="form-control" #dp="bsDatepicker" [(ngModel)]="startDate">
+              <small class="form-text text-muted">the date this game starts</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input type="text" class="form-control" maxlength="8" [(ngModel)]="startTime" placeholder="12:00AM">
+              <small class="form-text text-muted">the time this game starts (12:00AM)</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input bsDatepicker type="text" container="gameModal" class="form-control" #dp="bsDatepicker" [(ngModel)]="stopDate">
+              <small class="form-text text-muted">the date this game stops</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input type="text" class="form-control" maxlength="8" [(ngModel)]="stopTime" placeholder="12:00AM">
+              <small class="form-text text-muted">the time this game stops (12:00AM)</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="gameModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveGame()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #boardModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editBoard">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Board</h4>
+        <i class="fa fa-times fa-pull-right" (click)="boardModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="name" [(ngModel)]="editBoard.name" type="text" class="form-control form-control-sm" id="name" placeholder="Name">
+              <small class="form-text text-muted">name of this board</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <select class="form-control" id="boardType" [(ngModel)]="editBoard.boardType">
+                <option value=""></option>
+                <option value="Trivia">Trivia</option>
+                <option value="Map">Map</option>
+              </select>
+              <small class="form-text text-muted">the type of board to display</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="maxSubmissions" [(ngModel)]="editBoard.maxSubmissions" type="text" class="form-control form-control-sm" id="maxSubmissions" placeholder="Max Submissions">
+              <small class="form-text text-muted">maximum submission for a challenge</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="maxMinutes" [(ngModel)]="editBoard.maxMinutes" type="text" class="form-control form-control-sm" id="maxSubmissions" placeholder="Max Minutes">
+              <small class="form-text text-muted">maximum minutes</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="certificateThreshold" [(ngModel)]="editBoard.certificateThreshold" type="text" class="form-control form-control-sm" id="certificateThreshold" placeholder="Certificate Threshold">
+              <small class="form-text text-muted">the threshold to print a certificate for this board</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input name="maxConcurrentProblems" min="0" max="50" [(ngModel)]="editBoard.maxConcurrentProblems" type="number" class="form-control form-control-sm" id="maxConcurrentProblems" placeholder="Max Concurrent Gamespaces">
+              <small class="form-text text-muted">maximum concurrent gamespaces (overrides game setting)</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group">
+              <textarea name="text" [(ngModel)]="editBoard.startText" class="form-control form-control-sm" placeholder="Start Text" rows="10"></textarea>
+              <small class="form-text text-muted">text to show players before starting</small>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <markdown [data]="editBoard.startText"></markdown>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input bsDatepicker type="text" container="boardModal" class="form-control" #dp="bsDatepicker" [(ngModel)]="startDate">
+              <small class="form-text text-muted">the date this board starts</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input type="text" class="form-control" maxlength="8" [(ngModel)]="startTime" placeholder="12:00AM">
+              <small class="form-text text-muted">the time this board starts (12:00AM)</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input bsDatepicker type="text" container="boardModal" class="form-control" #dp="bsDatepicker" [(ngModel)]="stopDate">
+              <small class="form-text text-muted">the date this board stops</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input type="text" class="form-control" maxlength="8" [(ngModel)]="stopTime" placeholder="12:00AM">
+              <small class="form-text text-muted">the time this board stops (12:00AM)</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group">
+              <badge *ngFor="let b of badges" [badge]="b.key" (click)="toggleAvailableBadge(b.key)" [disabled]="!hasAvailableBadge(b.key)"></badge>
+              <small class="form-text text-muted">badges that can be earned for board participation</small>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-group">
+              <badge *ngFor="let b of badges" [badge]="b.key" (click)="toggleRequiredBadge(b.key)" [disabled]="!hasRequiredBadge(b.key)"></badge>
+              <small class="form-text text-muted">badges required to start this board</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="editBoard.isPractice" id="isPractice">
+                Practice
+              </label>
+              <small class="form-text text-muted">Practice boards are excluded from reporting.</small>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="editBoard.isPreviewAllowed" id="isPreviewAllowed">
+                Preview Allowed
+              </label>
+              <small class="form-text text-muted">Players can view the board before starting.</small>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="editBoard.isResetAllowed" id="isResetAllowed">
+                Allow Reset
+              </label>
+              <small class="form-text text-muted">Players can restart their board and attempt challenges again.</small>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="editBoard.isTitleVisible" id="isTitleVisible">
+                Show Titles
+              </label>
+              <small class="form-text text-muted">Displays Challenge titles on boards.</small>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="editBoard.allowSharedWorkspaces" id="allowSharedWorkspaces">
+                Allow Shared Workspaces
+              </label>
+              <small class="form-text text-muted">Enables shared workspaces across challenges.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="boardModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveBoard()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #categoryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editCategory">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Category</h4>
+        <i class="fa fa-times fa-pull-right" (click)="categoryModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group">
+              <input name="name" [(ngModel)]="editCategory.name" type="text" class="form-control form-control-sm" id="name" aria-describedby="nameHelp" placeholder="Name">
+              <small class="form-text text-muted">name of this category</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-2">
+            <small class="form-text text-muted">point value</small>
+          </div>
+          <div class="col-lg-6">
+            <small class="form-text text-muted">associated challenge</small>
+          </div>
+          <div class="col-lg-3">
+            <small class="form-text text-muted">disable question</small>
+          </div>
+          <div class="col-lg-1"></div>
+        </div>
+        <div class="row" *ngFor="let question of editCategory.questions; let i = index;">
+          <div class="col-lg-2">
+            <div class="form-group">
+              <input name="points" [(ngModel)]="question.points" type="number" class="form-control form-control-sm" id="points" aria-describedby="pointHelp" placeholder="Name">
+              
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-group">
+              <select name="type" class="form-control" [(ngModel)]="question.challengeLink.slug">
+                <option *ngFor="let challenge of challenges" value="{{ challenge.slug }}">({{ challenge.slug }}) {{ challenge.title }}</option>
+              </select>              
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="question.isDisabled" id="isDisabled">
+                Disabled
+              </label>              
+            </div>
+          </div>
+          <div class="col-lg-1">
+            <button [disabled]="editCategory.questions.length == 1" type="button" class="btn btn-danger btn-sm" (click)="onRemoveQuestion(editCategory, i)"><i class="fa fa-remove"></i></button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-9">
+            &nbsp;
+          </div>
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-info btn-sm" (click)="onAddQuestion(editCategory)"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="categoryModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveCategory()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #mapModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editMap">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Map</h4>
+        <i class="fa fa-times fa-pull-right" (click)="mapModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="form-group">
+              <input name="id" [disabled]="!editMap.isNew" [(ngModel)]="editMap.id" type="text" class="form-control form-control-sm" id="id" aria-describedby="idHelp" placeholder="Id">
+              <small class="form-text text-muted">id of this map</small>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group">
+              <input name="name" [(ngModel)]="editMap.name" type="text" class="form-control form-control-sm" id="name" aria-describedby="nameHelp" placeholder="Name">
+              <small class="form-text text-muted">name of this map</small>
+            </div>
+          </div>          
+          <div class="col-lg-6">
+            <div class="form-group">
+              <input name="imageUrl" [(ngModel)]="editMap.imageUrl" type="text" class="form-control form-control-sm" id="imageUrl" aria-describedby="imageUrlHelp" placeholder="Image URL">
+              <small class="form-text text-muted">image used by this map (http://)</small>
+            </div>
+          </div>
+        </div>        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="mapModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveMap()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #coordinateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editCoordinate">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Coordinate</h4>
+        <i class="fa fa-times fa-pull-right" (click)="coordinateModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="row">          
+          <div class="col-lg-6">
+            <div class="form-group">
+              <input name="name" [(ngModel)]="editCoordinate.name" type="text" class="form-control form-control-sm" id="name" aria-describedby="nameHelp" placeholder="Name">
+              <small class="form-text text-muted">name of this coordinate</small>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="editCoordinate.isDisabled" id="isDisabled">
+                Disabled
+              </label>
+              <small class="form-text text-muted">disable to prevent game interaction.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-2">
+            <div class="form-group">
+              <input name="points" [(ngModel)]="editCoordinate.points" type="number" class="form-control form-control-sm" id="points" aria-describedby="pointHelp" placeholder="Points">
+              <small class="form-text text-muted">point value</small>
+            </div>
+          </div>
+          <div class="col-lg-2">
+            <div class="form-group">
+              <input name="x" [(ngModel)]="editCoordinate.x" type="number" min="0" max="100" class="form-control form-control-sm" id="x" aria-describedby="xHelp" placeholder="x">
+              <small class="form-text text-muted">x</small>
+            </div>
+          </div>
+          <div class="col-lg-2">
+            <div class="form-group">
+              <input name="y" [(ngModel)]="editCoordinate.y" type="number" min="0" max="100" class="form-control form-control-sm" id="y" aria-describedby="yHelp" placeholder="y">
+              <small class="form-text text-muted">y</small>
+            </div>
+          </div>
+          <div class="col-lg-2">
+            <div class="form-group">
+              <input name="r" [(ngModel)]="editCoordinate.radius" type="number" class="form-control form-control-sm" id="r" min="1" max="5" aria-describedby="radiusHelp" placeholder="r">
+              <small class="form-text text-muted">radius</small>
+            </div>
+          </div>          
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group">
+              <select name="type" class="form-control" [(ngModel)]="editCoordinate.actionType">
+                <option value=""></option>
+                <option value="Map">Map</option>
+                <option value="Video">Video</option>
+                <!--<option value="Image">Image</option>-->
+                <option value="Challenge">Challenge</option>
+              </select>
+              <small class="form-text text-muted">action type</small>
+            </div>
+          </div>
+          <div class="col-lg-6" *ngIf="editCoordinate.actionType === 'Challenge'">
+            <div class="form-group">
+              <select name="type" class="form-control" [(ngModel)]="editCoordinate.challengeLink.slug">
+                <option *ngFor="let challenge of challenges" value="{{ challenge.slug }}">({{ challenge.slug }}) {{ challenge.title }}</option>
+              </select>
+              <small class="form-text text-muted">associated challenge</small>
+            </div>
+          </div>
+          <div class="col-lg-6" *ngIf="editCoordinate.actionType === 'Video'">
+            <div class="form-group">
+              <input name="actionValue" [(ngModel)]="editCoordinate.actionValue" type="text" class="form-control form-control-sm" id="actionValue" aria-describedby="actionValueHelp" placeholder="Action Value">
+              <small class="form-text text-muted">video url</small>
+            </div>
+          </div>
+          <div class="col-lg-6" *ngIf="editCoordinate.actionType === 'Image'">
+            <div class="form-group">
+              <input name="actionValue" [(ngModel)]="editCoordinate.actionValue" type="text" class="form-control form-control-sm" id="actionValue" aria-describedby="actionValueHelp" placeholder="Action Value">
+              <small class="form-text text-muted">image url</small>
+            </div>
+          </div>
+          <div class="col-lg-6" *ngIf="editCoordinate.actionType === 'Map'">
+            <div class="form-group">
+              <input name="actionValue" [(ngModel)]="editCoordinate.actionValue" type="text" class="form-control form-control-sm" id="actionValue" aria-describedby="actionValueHelp" placeholder="Action Value">
+              <small class="form-text text-muted">map id</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger pull-left" tooltip="Remove Coordinate" (click)="onRemoveCoordinate()"><i class="fa fa-trash-o"></i></button>
+        <button type="button" class="btn btn-secondary" (click)="coordinateModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveCoordinate()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">{{ delete.title }}</h4>
+        <i class="fa fa-times fa-pull-right" (click)="deleteModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        {{ delete.text }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="deleteModal.hide()">Close</button>
+        <button class="btn btn-danger" (click)="onDeleteConfirm()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

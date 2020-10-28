@@ -1,0 +1,23 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ng-container *ngIf="leaderboard">
+  <div class="card">
+    <div class="card-header text-uppercase">{{board.name}} Leaderboard</div>
+    <div class="card-body">
+      <ul class="list-unstyled">
+        <li *ngFor="let l of scores()" class="pb-3" title="{{l.name}}">
+          {{l.rank}}.
+          {{l.name.length > 30 ? (l.name | slice:0:30) + '...' : l.name }}
+          <img *ngIf="l.organizationLogoUrl" [src]="l.organizationLogoUrl" height="30px" class="mr-1 pull-right rounded-logo" alt="logo">
+        </li>
+      </ul>
+      <div class="text-right">
+          <button class="btn btn-link" [routerLink]="['/board', leaderboard.boardId, 'scores']">More ...</button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+

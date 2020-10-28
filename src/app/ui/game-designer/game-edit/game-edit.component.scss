@@ -1,0 +1,47 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+textarea {
+  resize: none;
+}
+
+.card-inner-body {
+  background: #303030;
+  padding: 1em;
+  margin-top: 1em;
+}
+
+.card-inner-body .card-inner-body {
+  background: #404040;
+  padding: .5em;
+  margin-top: .5em;
+}
+
+.category,
+.question {
+  border-left: solid 1px #eee;
+  border-right: solid 1px #eee;
+  border-bottom: solid 1px #eee;
+  text-align: center;
+  height: 80px;
+  padding: .5em 1em;
+  background: #333;
+}
+
+.category {
+  border-top: solid 1px #eee;
+  background: #222;
+}
+
+.category-container:hover {
+  cursor: pointer;
+
+  .category {
+    background: #333;
+  }
+
+  .question {
+    background: #444;
+  }
+}
+

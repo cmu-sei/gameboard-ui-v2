@@ -1,0 +1,261 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<form>
+  <div class="card">
+    <div class="card-header text-uppercase clearfix">
+      <div class="row">
+        <div class="col-lg-3">
+          Challenge
+          <i *ngIf="warnings.length > 0" (click)="warningsModal.show()" class="fa fa-exclamation-triangle text-warning warning-icon" tooltip="This challenge has {{ warnings.length }} warning(s)"></i>
+        </div>
+        <div class="col-lg-3 text-right">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Challenge Actions">
+            <button type="button" class="btn btn-info" (click)="onEditChallenge()"><i class="fa fa-fw fa-pencil"></i></button>
+          </div>
+        </div>
+        <div class="col-lg-3 text-right">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Challenge Actions">
+            <button [disabled]="true" type="button" class="btn btn-warning"><i class="fa fa-fw fa-copy"></i></button>
+            <button type="button" class="btn btn-light" (click)="onUpload()"><i class="fa fa-fw fa-upload"></i></button>
+            <button type="button" class="btn btn-light" (click)="onDownload()"><i class="fa fa-fw fa-download"></i></button>
+          </div>
+        </div>
+        <div class="col-lg-3 text-right">
+          <small *ngIf="isDirty" class="text-warning mr-1">changes pending...</small>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Challenge Actions">
+            <button type="button" class="btn btn-success" (click)="onSave()"><i class="fa fa-fw fa-save"></i></button>
+            <button [disabled]="isNew" type="button" class="btn btn-danger" (click)="onDeleteChallenge()"><i class="fa fa-fw fa-remove"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row" *ngIf="challenge">
+        <div class="col-lg-6">
+          <div class="challenge-detail">
+            <app-challenge-spec-detail [challenge]="challenge"></app-challenge-spec-detail>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="row">
+            <div class="col-lg-6">
+              <strong class="text-uppercase">Workspace</strong>
+            </div>
+            <div class="col-lg-6 text-right">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Workspace Actions">
+                <button *ngIf="!challenge.workspace" type="button" class="btn btn-info" (click)="onAddChallengeWorkspace()"><i class="fa fa-fw fa-plus"></i></button>
+                <button *ngIf="challenge.workspace" type="button" class="btn btn-info" (click)="onEditChallengeWorkspace()"><i class="fa fa-fw fa-pencil"></i></button>
+                <button [disabled]="!challenge.workspace" type="button" class="btn btn-danger" (click)="onRemoveChallengeWorkspace()"><i class="fa fa-fw fa-remove"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="card-inner-body workspace-detail" *ngIf="challenge.workspace">
+            <app-workspace-spec-detail [workspace]="challenge.workspace"></app-workspace-spec-detail>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" *ngIf="challenge">
+    <div class="card-header text-uppercase">
+      <div class="row">
+        <div class="col-lg-6">
+          Flags
+        </div>
+        <div class="col-lg-6 text-right">
+          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="Challenge Actions">
+            <button type="button" class="btn btn-info" (click)="onAddFlag()"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-inner-body flag" *ngFor="let flag of challenge.flags; let in=index;" [ngStyle]="getFlagStyle(in)">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="row">
+              <div class="col-lg-6">
+                <strong class="text-uppercase">Flag {{ in + 1 }}</strong>
+              </div>
+              <div class="col-lg-2 text-right">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Flag Move">
+                  <button [disabled]="in == 0" type="button" class="btn btn-secondary" (click)="onMoveFlag(in, -1)"><i class="fa fa-fw fa-chevron-up"></i></button>
+                  <button [disabled]="challenge.flags.length - 1 == in" type="button" class="btn btn-secondary" (click)="onMoveFlag(in, 1)"><i class="fa fa-fw fa-chevron-down"></i></button>
+                </div>
+              </div>
+              <div class="col-lg-4 text-right">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Flag Actions">
+                  <!--<button type="button" class="btn btn-light" (click)="onLaunchFlag(in)"><i class="fa fa-fw fa-rocket"></i></button>-->
+                  <button type="button" class="btn btn-info" (click)="onEditFlag(in)"><i class="fa fa-fw fa-pencil"></i></button>
+                  <button type="button" class="btn btn-warning" (click)="onCopyFlag(in)"><i class="fa fa-fw fa-copy"></i></button>
+                  <button type="button" class="btn btn-danger" (click)="onRemoveFlag(in)"><i class="fa fa-fw fa-remove"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="card-inner-body flag-detail">
+              <app-flag-spec-detail [flag]="flag"></app-flag-spec-detail>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="row">
+              <div class="col-lg-6">
+                <strong class="text-uppercase">Workspace</strong>
+              </div>
+              <div class="col-lg-6 text-right">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Workspace Actions">
+                  <button *ngIf="!flag.workspace" type="button" class="btn btn-info" (click)="onAddFlagWorkspace(in)"><i class="fa fa-fw fa-plus"></i></button>
+                  <button *ngIf="flag.workspace" type="button" class="btn btn-info" (click)="onEditFlagWorkspace(in)"><i class="fa fa-fw fa-pencil"></i></button>
+                  <button [disabled]="!flag.workspace" type="button" class="btn btn-danger" (click)="onRemoveFlagWorkspace(in)"><i class="fa fa-fw fa-remove"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="card-inner-body workspace-detail" *ngIf="flag.workspace">
+              <app-workspace-spec-detail [workspace]="flag.workspace"></app-workspace-spec-detail>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--<div class="mt-3 p-3" style="background: #010101;">
+    <code>{{ challenge | json }}</code>
+  </div>-->
+</form>
+
+<div bsModal #workspaceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editWorkspace">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Workspace</h4>
+        <i class="fa fa-times fa-pull-right" (click)="workspaceModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <app-workspace-spec-edit [workspace]="editWorkspace"></app-workspace-spec-edit>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="workspaceModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveWorkspace()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #challengeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editChallenge">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Challenge</h4>
+        <i class="fa fa-times fa-pull-right" (click)="challengeModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <app-challenge-spec-edit [challenge]="editChallenge"></app-challenge-spec-edit>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="challengeModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveChallenge()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #flagModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="editFlag">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Manage Flag</h4>
+        <i class="fa fa-times fa-pull-right" (click)="flagModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <app-flag-spec-edit [flag]="editFlag" [isMultiStage]="challenge.isMultiStage"></app-flag-spec-edit>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="flagModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onSaveFlag()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #downloadModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Download</h4>
+        <i class="fa fa-times fa-pull-right" (click)="downloadModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <textarea name="yaml" [(ngModel)]="download" class="form-control form-control-sm" placeholder="YAML" rows="10" readonly="readonly"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="downloadModal.hide()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #uploadModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Upload</h4>
+        <i class="fa fa-times fa-pull-right" (click)="uploadModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <textarea name="yaml" [(ngModel)]="upload" class="form-control form-control-sm" placeholder="YAML" rows="10"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="uploadModal.hide()">Close</button>
+        <button class="btn btn-primary" (click)="onUploadSave()">Commit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">{{ delete.title }}</h4>
+        <i class="fa fa-times fa-pull-right" (click)="deleteModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        {{ delete.text }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="deleteModal.hide()">Close</button>
+        <button class="btn btn-danger" (click)="onDeleteConfirm()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #warningsModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-start"
+     [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Warnings</h4>
+        <i class="fa fa-times fa-pull-right" (click)="warningsModal.hide()"></i>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li *ngFor="let warning of warnings;">{{ warning }}</li>
+        </ul>
+      </div>      
+    </div>
+  </div>
+</div>
+

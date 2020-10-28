@@ -1,0 +1,81 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div class="row mb-3">
+  <div class="col-lg-3">
+    <h3>Completion Report</h3>
+  </div>
+  <div class="col-lg-3">
+    <select class="form-control form-control" [(ngModel)]="id" (change)="onBoardChanged()">
+      <option *ngIf="!board" value="">Select...</option>
+      <option *ngFor="let b of boards" [value]="b.id">{{b.name}}</option>
+    </select>
+  </div>
+  <div class="col-lg-6 text-right">
+    <div class="btn-group" role="group" aria-label="Actions">
+      <button class="btn btn-link" (click)="export()" tooltip="Export to CSV"><i class="fa fa-download fa-fw"></i></button>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="report">  
+  <ng-container *ngIf="report.items.length == 0">
+    <div class="card">
+      <div class="card-body">
+        <span class="text-muted">No statistics available.</span>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="report.items.length">
+    <ng-container *ngFor="let item of report.items">
+      <div class="card">
+        <div class="card-header">
+          {{item.name}}
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-sm text-right">
+            <colgroup>
+              <col style="width: 25%" />
+              <col style="width: 10%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 10%" />
+              <col style="width: 15%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-left">Challenge</th>
+                <th>Points</th>
+                <th>Success (#/%)</th>
+                <th>Partial (#/%)</th>
+                <th>Failure (#/%)</th>
+                <th>Avg Time</th>
+                <th># Attempts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let challenge of item.challenges">
+                <td class="text-left">{{challenge.title}}</td>
+                <td>{{challenge.points}}</td>
+                <td>
+                  {{challenge.success.count}}/{{challenge.success.ratio | number : '1.0-2'}}&#37;
+                </td>
+                <td>
+                  {{challenge.partial.count}}/{{challenge.partial.ratio | number : '1.0-2'}}&#37;
+                </td>
+                <td>
+                  {{challenge.failure.count}}/{{challenge.failure.ratio | number : '1.0-2'}}&#37;
+                </td>
+                <td>{{challenge.averageMilliseconds | timespan }}</td>
+                <td>{{challenge.total}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>
+

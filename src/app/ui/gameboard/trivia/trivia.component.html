@@ -1,0 +1,32 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div *ngIf="board" class="trivia">
+  <div class="row align-items-start">
+    <div *ngFor="let category of board.categories" class="col">
+      <div class="category">
+        <span class="name">{{ category.name }}</span>
+      </div>
+      <ng-container *ngFor="let question of category.questions">
+        <div [class]="'question ' + questionClass(question)" (click)="onClick(question)">
+          <div class="points">{{ question.points }}</div>
+          <div *ngIf="board.isTitleVisible && question.challenge && question.challenge.title" class="title" [ngClass]="{'text-warning': !question.isDisabled, 'text-muted': question.isDisabled }">
+            <span *ngIf="question.challenge.title.length > 30" tooltip="{{ question.challenge.title }}">
+              {{ question.challenge.title | ellipsis:30 }}
+            </span>
+            <span *ngIf="question.challenge.title.length <= 30">
+              {{ question.challenge.title }}
+            </span>
+          </div>
+          <!--<div class="legend">
+            <app-legend *ngIf="question.challenge.isMultiStage || question.challenge.tokenCount > 1" tooltip="Partial Credit" className="badge-warning" value="P"></app-legend>
+            <app-legend *ngIf="question.isDisabled" tooltip="Currently Unavailable" className="badge-danger" value="U"></app-legend>
+          </div>-->
+        </div>        
+      </ng-container>
+    </div>
+  </div>
+</div>
+

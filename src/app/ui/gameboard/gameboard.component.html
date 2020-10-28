@@ -1,0 +1,107 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<ng-container *ngIf="board">
+  <app-board-header [board]="board"
+                    [teamBoard]="teamBoard"
+                    [profile]="profile"
+                    (start)="displayStartBoard()"
+                    (certificate)="downloadCertificate()"
+                    (reset)="displayResetBoard()"></app-board-header>
+
+  <app-trivia *ngIf="board.boardType === 'Trivia'" [board]="board" [teamBoard]="teamBoard"
+              [profile]="profile" [isTestMode]="isTestMode" (selected)="onTriviaClick($event)"></app-trivia>
+
+  <app-map *ngIf="board.boardType === 'Map'" [board]="board" [teamBoard]="teamBoard" [map]="map" [isTooltipVisible]="board.isTitleVisible"
+           [profile]="profile" [isTestMode]="isTestMode" (selected)="onMapClick($event)"></app-map>
+
+  <div bsModal #videoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" (click)="videoStop()"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <app-video *ngIf="mapVideoUrl" [videoUrl]="mapVideoUrl"></app-video>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div bsModal #startModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" [config]="{backdrop: 'static'}" aria-labelledby="dialog-start">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="board">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-child-name" class="modal-title pull-left">Start {{ board.name }}</h4>
+        <i class="fa fa-times" (click)="startModal.hide()"></i>
+      </div>
+      <div class="modal-body" *ngIf="status">
+        <div class="row">
+          <div class="col-lg-6">
+            <p>
+              This gameboard is restricted to a continuous {{board.maxHours}} hour window.
+              This time restriction may be different than other competitions you've done.
+            </p>
+            <p>
+              If you <span *ngIf="multiplayer">and your team</span> start
+              now, your session will end at {{ sessionEnd | date:'M/dd/yyyy h:mma'}}.
+              You will not be able to start challenges or submit flags after that time.
+            </p>
+            <markdown *ngIf="board.startText" [data]="board.startText"></markdown>
+            <p>
+              Clicking <code>Start</code> will attempt to claim a session, and if successful, will start your timer.
+              Are you ready to begin?
+            </p>
+            <div class="text-center">
+              <app-confirm-button id="dialog-start" name="Start" (value)="startBoard()" aria-label="dialog-start">
+                Are you sure you want to start this board now?
+              </app-confirm-button>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <h4>Forecast</h4>
+            <table class="table table-sm">
+              <thead>
+                <tr><th>Time</th><th>Available Sessions</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let f of status.forecast">
+                  <td>{{f.time | date:'M/dd h:mm' }}</td>
+                  <td [class.table-danger]="f.available < 2"
+                      [class.table-warning]="f.available >= 2 && f.available/f.reserved*100 < 25"
+                      [class.table-success]="f.available/f.reserved*100 >= 25">
+                    {{f.available}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #resetModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" [config]="{backdrop: 'static'}" aria-labelledby="dialog-reset">
+  <div class="modal-dialog modal-dialog-centered modal-lg" *ngIf="board">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Reset Board</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to reset this board? All scores and progress for all challenges on this board will be lost.</p>
+      </div>
+      <div *ngIf="board.allowSharedWorkspaces == true" class="modal-body">
+        <p>This board uses shared gamespaces. Resetting it will remove all active gamespaces on this board for all members of this team. Your team members may lose progress. This action can't be undone. Are you sure you want to continue?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" (click)="resetModal.hide()">Cancel</button>
+        <button type="button" class="btn btn-success btn-sm" (click)="resetGameboard()">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+

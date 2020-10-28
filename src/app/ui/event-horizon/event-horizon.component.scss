@@ -1,0 +1,24 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
+@import '../../../scss/variables';
+
+.success {
+  fill: $success;
+  opacity: .7;
+}
+
+.failure {
+  fill: $danger;
+  opacity: .7;
+}
+
+.partial {
+  fill: $yellow;
+  opacity: .7;
+}
+
+.start {
+  fill: $white;
+}
+

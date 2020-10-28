@@ -1,0 +1,101 @@
+<!--
+Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+-->
+
+<div class="card" *ngIf="profile">
+  <div class="card-header text-uppercase text-center">
+    <div class="row">
+      <div class="col-lg-2">
+        <a class="pull-left" routerLink="../enrollment"><i class="fa fa-chevron-left"></i> Previous</a>
+      </div>
+      <div class="col-lg-8">
+        Manage Teammates        
+      </div>
+      <div class="col-lg-2">
+        <a class="pull-right" routerLink="../confirm">Next <i class="fa fa-chevron-right"></i></a>
+      </div>
+    </div>    
+  </div>
+  <div class="card-body">
+    <ng-container *ngIf="profile.user.organization && multiplayer">
+      <div class="row">
+        <div class="col-lg-6" *ngIf="canInvite()">
+          <strong>Invite Teammates</strong>
+          <hr />
+          <p class="border-left border-warning p-2 ml-2">
+            Teams must have at least {{ minTeamSize }} member(s) and not more than {{maxTeamSize}}.
+          </p>
+          <p class="border-left border-light p-2 ml-2">
+            If you plan to add teammates to your team, generate an invitation.
+          </p>
+
+          <div class="text-center mt-2">
+            <hr />
+            <button type="button" class="btn btn-success" (click)="openModal(inviteModal)">
+              Generate Invitation
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-6" *ngIf="isMember()">
+          <p class="border-left border-warning p-2 ml-2">
+            Enrollment Pending. Please wait for your team leader to finish the team enrollment.
+          </p>
+        </div>
+        <div class="col-lg-6" *ngIf="profile.team">
+          <strong>Current Teammates</strong>
+          <hr />
+          <app-team-presence></app-team-presence>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="profile.user.organization && !multiplayer">
+      <p class="border-left border-warning p-2 ml-2">
+        This is a solo event.
+      </p>
+    </ng-container>
+    <ng-container *ngIf="profile && profile.user.organization && !profile.team">
+      <p class="border-left border-warning p-2 ml-2">
+        You need to <a routerLink="../enrollment">choose your enrollment name</a> before continuing.
+      </p>
+    </ng-container>
+    <ng-container *ngIf="!profile.user.organization">
+      <p class="border-left border-warning p-2 ml-2">
+        You need to <a routerLink="../organization">select an organization</a> before continuing.
+      </p>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #inviteModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Generate Invitation Link</h4>
+  </div>
+  <div class="modal-body">    
+    <p class="border-left border-warning p-2 ml-2">
+      Previous invitation links will no longer work once you generate a new link.
+    </p>
+    <div *ngIf="url">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" value="{{ url }}" readonly="readonly">
+        <div class="input-group-append">
+          <button (click)="copyToClipboard(invitationUrl)" class="btn btn-light btn-sm" tooltip="Copy to Clipboard">
+            <i class="fa fa-fw"></i>
+            <i class="fa fa-clipboard"></i>
+            <i *ngIf="copied" class="fa fa-fw fa-check text-success"></i>
+            <i *ngIf="!copied" class="fa fa-fw"></i>
+          </button>
+        </div>
+      </div>
+      <p class="border-left border-light p-2 ml-2">
+        Share the invitation link below with your teammates.
+      </p>
+    </div>    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="modalRef.hide()">Close</button>
+    <button type="button" class="btn btn-success btn-sm" (click)="code()">Generate <i *ngIf="generated" class="fa fa-check"></i></button>
+  </div>
+</ng-template>
+
+
