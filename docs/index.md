@@ -1,3 +1,5 @@
+# Gameboard Roles Guide
+
 The gameboard documentation is organized by *roles*. There are five: participant, observer, moderator, game designer, and challenge designer.
 
 ## Participant, observer, and moderator
