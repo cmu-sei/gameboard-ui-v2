@@ -27,33 +27,21 @@
           <p class="view"><a href="./gb-participant-guide">Gameboard Participant Guide</a></p>
         </div>
         
-        <button class="accordion">Caster Documentation</button>
+        <button class="accordion">Game Designer Documentation</button>
         <div class="panel">
-          <p class="view"><a href="./caster-overview">Caster Overview</a></p>
+          <p class="view"><a href="./gb-designer-guide">Gameboard Designer Guide</a></p>
         </div>
         
-        <button class="accordion">Player Documentation</button>
+        <button class="accordion">Challenge Developer Documentation</button>
         <div class="panel"> 
-          <p class="view"><a href="./player-overview">Player Overview</a></p>
-          <p class="view"><a href="./player-guide">Player Guide</a></p>
-          <p class="view"><a href="./player-applications">Player Applications</a></p>
-          <b>Player "How to":</b>
-          <p class="view"><a href="./player-copy-and-paste-text">How to copy and paste text</a></p>
-          <p class="view"><a href="./create-a-new-view-template">How to create a new View Template</a></p>
-          <p class="view"><a href="./player-power-a-vm-on-or-off">How to power a VM on or off</a></p>
-          <p class="view"><a href="./player-how-to-upload-files">How to upload files</a></p>
+          <p class="view"><a href="./gb-challenge-dev-guide">Challenge Developer Guide</a></p>         
         </div>
-        
-        <button class="accordion">Reference Material</button>
-        <div class="panel"> 
-          <p class="view"><a href="./crucible-glossary">Crucible Glossary</a></p>
 
+        {% if site.github.is_project_page %}
 
-          {% if site.github.is_project_page %}
+        <p class="view"><a href="{{ site.github.repository_url }}">View the Project on GitHub <small>{{ site.github.repository_nwo }}</small></a></p>
 
-          <p class="view"><a href="{{ site.github.repository_url }}">View the Project on GitHub <small>{{ site.github.repository_nwo }}</small></a></p>
-
-          {% endif %}
+        {% endif %}
         </div>
         
         <div class="githublinks">
