@@ -27,7 +27,7 @@ A *moderator* can do everything an observer can do on the Teams page, plus:
 - Grant permissions (observer, challenge developer, game designer)
 - Export the Completion Report, Leaderboard, challenge feedback data, and team activity
 
-Participant, observer, and moderator information can be found in the [Gameboard Participant Guide]( ).
+Participant, observer, and moderator information can be found in the [Gameboard Participant Guide](https://cmu-sei.github.io/gameboard-ui/gb-participant-guide).
 
 ## Game Designer
 
