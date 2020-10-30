@@ -22,21 +22,12 @@
 
         <p>{{ site.description | default: site.github.project_tagline }}</p>
         
-        <button class="accordion">Participant Documentation</button>
-        <div class="panel">        
-          <p class="view"><a href="./gb-participant-guide">Gameboard Participant Guide</a></p>
-        </div>
+        <p class="view"><a href="./gb-participant-guide">Gameboard Participant Guide</a></p>
+            
+        <p class="view"><a href="./gb-designer-guide">Gameboard Designer Guide</a></p>
+                
+        <p class="view"><a href="./gb-challenge-dev-guide">Challenge Developer Guide</a></p>         
         
-        <button class="accordion">Game Designer Documentation</button>
-        <div class="panel">
-          <p class="view"><a href="./gb-designer-guide">Gameboard Designer Guide</a></p>
-        </div>
-        
-        <button class="accordion">Challenge Developer Documentation</button>
-        <div class="panel"> 
-          <p class="view"><a href="./gb-challenge-dev-guide">Challenge Developer Guide</a></p>         
-        </div>
-
         <div class="panel"> 
                  
         {% if site.github.is_project_page %}
