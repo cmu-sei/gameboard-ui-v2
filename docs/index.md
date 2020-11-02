@@ -65,4 +65,4 @@ Challenge developer information can be found in the [Challenge Developer Guide](
 
 ## License
 
-Copyright 2020 Carnegie Mellon University. See the [license](https://github.com/cmu-sei/gameboard-ui/blob/master/License.txt) file for details.
+Copyright 2020 Carnegie Mellon University. See the [license](https://github.com/cmu-sei/gameboard-ui/blob/master/License.md) file for details.
