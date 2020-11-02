@@ -41,7 +41,7 @@ A *game designer* builds a new game space; that is, the framework that contains 
 - Specify category and point values
 - Assign background images to boards
 
-Game designer information can be found in the [Game Designer Guide]( ).
+Game designer information can be found in the [Game Designer Guide](./gb-designer-guide).
 
 ## Challenge Developer
 
@@ -52,7 +52,7 @@ A *challenge developer* creates the challenges that populate the game boards. A 
 - Add workspaces
 - Manage flags, tokens, and grading
 
-Challenge developer information can be found in the [Challenge Developer Guide]( ).
+Challenge developer information can be found in the [Challenge Developer Guide](./gb-challenge-dev-guide).
 
 ## Roles Matrix
 
