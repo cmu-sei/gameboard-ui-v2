@@ -37,7 +37,7 @@
               "node_modules/marked/lib/marked.js",
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-ui-dist/jquery-ui.js",
-              "libs/vmware-wmks/wmks.jam.js"
+              "libs/vmware-wmks/wmks.min.js"
             ],
             "es5BrowserSupport": true
           },
