@@ -30,14 +30,14 @@
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/font-awesome/css/font-awesome.css",
 			        "./node_modules/ngx-snackbar/bundles/style.css",
-              "libs/vmware-wmks/wmks-all.css",
+              "./node_modules/vmware-wmks/css/css/wmks-all.css",
               "src/styles.scss"
             ],
             "scripts": [
               "node_modules/marked/lib/marked.js",
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-ui-dist/jquery-ui.js",
-              "libs/vmware-wmks/wmks.min.js"
+              "node_modules/vmware-wmks/wmks.min.js"
             ],
             "es5BrowserSupport": true
           },

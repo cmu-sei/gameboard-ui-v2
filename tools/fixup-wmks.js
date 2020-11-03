@@ -1,3 +1,4 @@
+#!/usr/local/bin/node
 /*
 Gameboard
 
@@ -20,8 +21,6 @@ use and distribution.
 
 DM20-0284
 */
-
-#!/usr/local/bin/node
 
 // fixup vmware-wmks css errors
 
@@ -47,4 +46,3 @@ try {
 catch (error) {
   console.error('Error occurred:', error);
 }
-
