@@ -52,6 +52,10 @@ export class ChallengeComponent extends BaseComponent implements OnInit, OnDestr
   showFlagIndexSelect: boolean = false;
   surveyMessage: string = "Feedback is welcome for this challenge. Feedback is not monitored and should not be used for help desk requests. Feedback cannot be changed once submitted."
   modalRef: BsModalRef;
+  isModerator = false;
+  isObserver = false;
+  isChallengeDeveloper = false;
+  isGameDesigner = false;
 
   constructor(
     private main: HomeComponent,
@@ -92,7 +96,6 @@ export class ChallengeComponent extends BaseComponent implements OnInit, OnDestr
       }
       return `<a href=${href}>${text}</a>`;
     };
-
   }
 
   ngOnInit() {
@@ -112,6 +115,10 @@ export class ChallengeComponent extends BaseComponent implements OnInit, OnDestr
         this.logger.log('user updated:', profile);
         if (!!profile) {
           this.profile = profile;
+          this.isModerator = profile && profile.user.isModerator;
+          this.isObserver = profile && profile.user.isObserver;
+          this.isChallengeDeveloper = profile && profile.user.isChallengeDeveloper;
+          this.isGameDesigner = profile && profile.user.isGameDesigner;
         }
         this.logger.log('user updated: reload challenge');
 

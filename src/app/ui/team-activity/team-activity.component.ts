@@ -161,6 +161,5 @@ export class TeamActivityComponent extends BaseComponent implements OnInit {
 
     return 'working';
   }
-
 }
 

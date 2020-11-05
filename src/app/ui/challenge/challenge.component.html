@@ -202,12 +202,16 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
             </ul>
           </div>
         </div>
-      </div>      
-      <app-survey *ngIf="challengeProblem.problem" [id]="challengeProblem.problem.challengeLinkId"                  
+      </div>
+      <app-survey *ngIf="challengeProblem.problem" [id]="challengeProblem.problem.challengeLinkId"
                   [message]="surveyMessage"
                   [hideCompleteButton]="true">
       </app-survey>
       <p *ngIf="challengeProblem.problem" class="text-right text-muted">Support Code: {{challengeProblem.problem.id | slice:0:8}}</p>
+      <p *ngIf="challengeProblem.problem && challengeProblem.problem.gamespaceReady &&
+         challengeProblem.board && challengeProblem.board.allowSharedWorkspaces &&
+         (isChallengeDeveloper || isGameDesigner || isModerator || isObserver)" class="text-right text-muted">Workspace Code: {{challengeProblem.problem.sharedId | slice:0:8}}</p>
+
     </div>
   </div>
 </ng-container>

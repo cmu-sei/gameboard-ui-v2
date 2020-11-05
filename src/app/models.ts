@@ -214,6 +214,7 @@ export class ProblemDetail {
   gamespaceReady?: boolean;
   gamespaceText?: string;
   isError?: boolean;
+  sharedId?: string;
 }
 
 export class ProblemCreate {
@@ -306,6 +307,7 @@ export class TeamActivity {
   gamespaceReady?: boolean;
   boardId?: string;
   boardName?: string;
+  workspaceCode?: string;
 }
 
 export class TeamInviteCode {

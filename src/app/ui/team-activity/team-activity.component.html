@@ -32,7 +32,12 @@ Released under a MIT (SEI)-style license. See LICENSE.md in the project root for
             <td>{{a.score}}</td>
             <td>{{a.status}}</td>
             <td>{{a.gamespaceReady ? 'on' : 'off'}}</td>
-            <td>{{a.problemId | slice:0:8}}</td>
+            <ng-container *ngIf="a.workspaceCode">
+              <td>{{a.problemId | slice:0:8}} / {{a.workspaceCode | slice:0:8}}</td>
+            </ng-container>
+            <ng-container *ngIf="!a.workspaceCode">
+              <td>{{a.problemId | slice:0:8}}</td>
+            </ng-container>
           </tr>
         </tbody>
       </table>
