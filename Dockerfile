@@ -6,7 +6,7 @@ ARG commit
 WORKDIR /app
 COPY package.json package-lock.json tools/ ./
 RUN npm install && \
-    node tools/fixup-wmks.js
+    node fixup-wmks.js
 COPY . .
 RUN $(npm bin)/ng build --prod --output-path /app/dist && \
     sed -i s/##COMMIT##/"$commit"/ /app/dist/assets/settings.json && \
