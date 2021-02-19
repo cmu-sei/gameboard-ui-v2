@@ -8,6 +8,7 @@ COPY package.json package-lock.json tools/ ./
 RUN npm install && \
     node fixup-wmks.js
 COPY . .
+RUN if [ -e "wmks.tar" ]; then tar xf wmks.tar -C node_modules/vmware-wmks; fi
 RUN $(npm bin)/ng build --prod --output-path /app/dist && \
     sed -i s/##COMMIT##/"$commit"/ /app/dist/assets/settings.json && \
     echo "$commit" > /app/dist/commit.txt
