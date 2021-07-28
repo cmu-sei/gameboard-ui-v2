@@ -1,6 +1,6 @@
 # Gameboard UI
 
-Developed by Carnegie Mellon University's Software Engineering Institute (SEI), **Gameboard** is a flexible web platform that provides game design capabilities and a competition-ready user interface. The Gameboard UI web client works in conjunction with the [Gameboard API](https://github.com/cmu-sei/gameboard) to deliver a full competiton environment. The Gameboard UI was built using Angular.
+Developed by Carnegie Mellon University's Software Engineering Institute (SEI), **Gameboard** is a flexible web platform that provides game design capabilities and a competition-ready user interface. The Gameboard UI web client works in conjunction with the [Gameboard API](https://github.com/cmu-sei/gameboard-v2) to deliver a full competiton environment. The Gameboard UI was built using Angular.
 
 ## Dependencies
 1. Gameboard API
